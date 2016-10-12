@@ -1,0 +1,61 @@
+<?php
+/**
+ * PlacetoPay Connector for Magento
+ *
+ * @category   design_default
+ * @package    EGM_PlacetoPay
+ * @copyright  Copyright (c) 2009-2015 EGM Ingeniería sin fronteras S.A.S.
+ * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+$_code = $this->getMethodCode()
+
+?>
+<ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none">
+    <li>
+        <img src="https://www.placetopay.com/images/providers/placetopay_xh48.png" border="0" alt="PlacetoPay"/><br/>
+        <?php echo $this->__('You will be redirected to the PlacetoPay secure payment page when you place an order.') ?>
+        <br/>
+        <p class="notice">
+            <?php
+            $p2p_logo = $this->getMethod()->getConfigData('display_logo');
+            if ($p2p_logo) {
+                foreach (explode(',', $p2p_logo) as $franchise) {
+                    echo '<img src="https://www.placetopay.com/images/providers/' . $franchise . '.gif" border="0" alt="" style="display:inline-block" />&nbsp;';
+                }
+            }
+            ?>
+        </p>
+        <?php if ($this->hasPendingOrders()) : ?>
+            <br/>
+            <span style="color: red !important;font-weight: bold;"><?php echo $this->__('Warning!') ?></span><br/>
+            <p style="color: #636363;font-weight: ligth;text-align: justify;font-size:12px;">
+                <?php if ($this->countPendingOrders == 1) : ?>
+                    <?php echo sprintf($this->__("At this time your order #%s display a checkout transaction which is pending receipt of confirmation from your financial institution, please wait a few minutes and check back later to see if your payment was successfully confirmed. For more information about the current state of your operation you may contact our customer service line at %s or send your concerns to the email %s and ask for the status of the transaction: '%s'."),
+                        $this->lastOrder,
+                        Mage::getStoreConfig('general/store_information/phone'),
+                        '<a href="mailto:' . Mage::getStoreConfig('trans_email/ident_sales/email') . '">' . Mage::getStoreConfig('trans_email/ident_sales/email') . '</a>',
+                        (isset($this->lastAuthorization) ? $this->lastAuthorization : 'N/A')); ?>
+                <?php else : ?>
+                    <?php echo sprintf($this->__('You have orders in process with payment transaction pending from get a bank response.<br/>We recommend you to review the section %s, to verify that a double payment not be charged.<br/>If you wish more information about the current status of your payment process please contact us in our support phone %s or send your questions to the email %s.'),
+                        '<a href="' . $this->getUrl('customer/account', array('_secure' => true)) . '">' . $this->__("My account / My orders") . '</a>',
+                        Mage::getStoreConfig('general/store_information/phone'),
+                        '<a href="mailto:' . Mage::getStoreConfig('trans_email/ident_sales/email') . '">' . Mage::getStoreConfig('trans_email/ident_sales/email') . '</a>'); ?>
+                <?php endif; ?>
+            </p>
+            <br/>
+            <span
+                style="color: red !important;font-weight: bold;"><?php echo $this->__('Meanwhile you have pending transactions is not advised to proceed.') ?></span>
+            <br/>
+        <?php endif; ?>
+        <?php if ($this->hasCifin()) : ?>
+            <br/>
+            <p style="color: #636363;font-weight: ligth;text-align: justify;">
+                <?php echo sprintf($this->__("<small>Any person who realizes a purchase in the site <b>%s</b>, acting freely and voluntarily, authorizes to <b>%s</b>, through the service provider <b>EGM Ingeniería Sin Fronteras S.A.S</b> y/o <b>Place to Pay</b> to consult and request information from credit, financial, commercial performance and services to third parties, even in countries of the same nature in the central risk, generating a footprint consultation.</small>"), Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB), Mage::getStoreConfig('placetopay/merchantname')) ?>
+                <br/></p>
+            </p>
+        <?php endif ?>
+
+    </li>
+</ul>
+

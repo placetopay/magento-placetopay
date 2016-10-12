@@ -1,0 +1,316 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PlacetoPay Connector for Magento
+ *
+ * @category   EGM
+ * @package    EGM_PlacetoPay
+ * @copyright  Copyright (c) 2009-2015 EGM Ingenieria sin fronteras S.A.S.
+ * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+-->
+<config>
+    <sections>
+        <payment>
+            <groups>
+                <hint>
+                    <frontend_model>placetopay/adminhtml_system_config_fieldset_hint</frontend_model>
+                    <sort_order>0</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </hint>
+            </groups>
+        </payment>
+        <placetopay translate="label" module="placetopay">
+            <label>
+                <![CDATA[<img src="https://www.placetopay.com/images/providers/placetopay_xh18.png" border="0" height="18" alt="PlacetoPay"/>]]></label>
+            <header_css>placetopay-header</header_css>
+            <tab>sales</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>350</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <global translate="label comment">
+                    <label>Merchant Parameters</label>
+                    <comment></comment>
+                    <fieldset_css>placetopay-config</fieldset_css>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>5</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <merchantname translate="label">
+                            <label>Company Name</label>
+                            <frontend_type>text</frontend_type>
+                            <config_path>placetopay/merchantname</config_path>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </merchantname>
+                        <merchantdocument translate="label">
+                            <label>Merchant ID</label>
+                            <frontend_type>text</frontend_type>
+                            <config_path>placetopay/merchantdocument</config_path>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </merchantdocument>
+                    </fields>
+                </global>
+                <gpg translate="label comment">
+                    <label>GPG Security Parameters</label>
+                    <comment></comment>
+                    <fieldset_css>placetopay-config</fieldset_css>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <gpgpath translate="label comment">
+                            <label>GPG Executable Path</label>
+                            <comment>Full path to the GnuPG executable file</comment>
+                            <config_path>placetopay/gpg/gpgpath</config_path>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>34</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </gpgpath>
+                        <gpghomedir translate="label comment">
+                            <label>Keyring Home Directory</label>
+                            <comment>Directory where the keyring is founded</comment>
+                            <config_path>placetopay/gpg/gpghomedir</config_path>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>38</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </gpghomedir>
+                        <keyid translate="label comment">
+                            <label>GnuPG Merchant Key</label>
+                            <comment>Key ID created by the merchant to connect with PlacetoPay</comment>
+                            <config_path>placetopay/gpg/keyid</config_path>
+                            <frontend_type>select</frontend_type>
+                            <source_model>EGM_PlacetoPay_Model_System_Config_Source_GnuPGKeys</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </keyid>
+                        <passphrase translate="label comment">
+                            <label>Merchant Passphrase</label>
+                            <comment>Password used at the time of the creation of the key</comment>
+                            <config_path>placetopay/gpg/passphrase</config_path>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </passphrase>
+                        <recipientkeyid translate="label comment">
+                            <label>GnuPG PlacetoPay Key</label>
+                            <comment>PlacetoPay Key ID</comment>
+                            <config_path>placetopay/gpg/recipientkeyid</config_path>
+                            <frontend_type>select</frontend_type>
+                            <source_model>EGM_PlacetoPay_Model_System_Config_Source_GnuPGKeys</source_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </recipientkeyid>
+                    </fields>
+                </gpg>
+                <standard translate="label comment">
+                    <label>Website Payments Standard Settings</label>
+                    <fieldset_css>placetopay-config</fieldset_css>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>15</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <title translate="label comment">
+                            <label>Title</label>
+                            <comment>It is recommended to set this value per store views.</comment>
+                            <config_path>payment/placetopay_standard/title</config_path>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <active translate="label source_model">
+                            <label>Enabled</label>
+                            <config_path>payment/placetopay_standard/active</config_path>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <customersiteid translate="label comment">
+                            <label>Customer Site ID</label>
+                            <config_path>payment/placetopay_standard/customersiteid</config_path>
+                            <comment>Identification issued by PlacetoPay to the merchant</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </customersiteid>
+                        <description translate="label comment">
+                            <label>Payment description</label>
+                            <comment>It is recommended to set this value per store views.</comment>
+                            <config_path>payment/placetopay_standard/description</config_path>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </description>
+                        <display_logo translate="label comment">
+                            <label>Display logo</label>
+                            <config_path>payment/placetopay_standard/display_logo</config_path>
+                            <comment>Choose the logos to be displayed under the PlacetoPay logo in payment method
+                                selection
+                            </comment>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>EGM_PlacetoPay_Model_System_Config_Source_Logos</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </display_logo>
+                        <hascifin translate="label source_model">
+                            <label>Enable CIFIN Message</label>
+                            <config_path>payment/placetopay_standard/hascifin</config_path>
+                            <comment>Select yes to display the warning message at payment.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>01</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </hascifin>
+                        <final_page translate="label source_model">
+                            <label>Final page</label>
+                            <config_path>payment/placetopay_standard/final_page</config_path>
+                            <frontend_type>select</frontend_type>
+                            <source_model>EGM_PlacetoPay_Model_System_Config_Source_FinalPage</source_model>
+                            <sort_order>35</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </final_page>
+                    </fields>
+                </standard>
+                <promotion translate="label comment">
+                    <label>Website Payments Promotion Settings</label>
+                    <fieldset_css>placetopay-config</fieldset_css>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>20</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <title translate="label comment">
+                            <label>Title</label>
+                            <comment>It is recommended to set this value per store views.</comment>
+                            <config_path>payment/placetopay_promotion/title</config_path>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <active translate="label source_model">
+                            <label>Enabled</label>
+                            <config_path>payment/placetopay_promotion/active</config_path>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <hascifin translate="label source_model">
+                            <label>Enable CIFIN Message</label>
+                            <config_path>payment/placetopay_promotion/hascifin</config_path>
+                            <comment>Select yes to display the warning message at payment.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>01</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </hascifin>
+                        <customersiteid translate="label comment">
+                            <label>Customer Site ID</label>
+                            <config_path>payment/placetopay_promotion/customersiteid</config_path>
+                            <comment>Identification issued by PlacetoPay to the merchant</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </customersiteid>
+                        <description translate="label comment">
+                            <label>Payment description</label>
+                            <comment>It is recommended to set this value per store views.</comment>
+                            <config_path>payment/placetopay_promotion/description</config_path>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </description>
+                        <display_logo translate="label comment">
+                            <label>Display logo</label>
+                            <config_path>payment/placetopay_promotion/display_logo</config_path>
+                            <comment>Choose the logos to be displayed under the PlacetoPay logo in payment method
+                                selection
+                            </comment>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>EGM_PlacetoPay_Model_System_Config_Source_Logos</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </display_logo>
+                        <final_page translate="label source_model">
+                            <label>Final page</label>
+                            <config_path>payment/placetopay_promotion/final_page</config_path>
+                            <frontend_type>select</frontend_type>
+                            <source_model>EGM_PlacetoPay_Model_System_Config_Source_FinalPage</source_model>
+                            <sort_order>35</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </final_page>
+                        <promo_hours translate="label comment">
+                            <label>Hours promotion</label>
+                            <config_path>payment/placetopay_promotion/promo_hours</config_path>
+                            <comment>Choose the hours that the average payment will be active when associated with a
+                                promotion
+                            </comment>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>EGM_PlacetoPay_Model_System_Config_Source_Hours</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </promo_hours>
+                    </fields>
+                </promotion>
+            </groups>
+        </placetopay>
+    </sections>
+</config>

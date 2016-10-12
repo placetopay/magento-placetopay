@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PlacetoPay Connector for Magento
+ *
+ * @category   EGM
+ * @package    EGM_PlacetoPay
+ * @copyright  Copyright (c) 2015 EGM Ingeniería sin fronteras S.A.S.
+ * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+-->
+<layout version="0.1.0">
+	<default>	
+    	<reference name="head">
+        	<action method="addJs"><script>placetopay.js</script></action>
+    	</reference>
+	</default>
+	<sales_order_view>
+    	<reference name="sales.order.info">
+    		<action method="setTemplate">
+    	    	<template>placetopay/sales/order/info.phtml</template>
+        	</action>
+   	 	</reference>
+	</sales_order_view>
+	<sales_guest_view>
+    	<reference name="sales.order.info">
+    		<action method="setTemplate">
+    	    	<template>placetopay/sales/order/info.phtml</template>
+        	</action>
+   	 	</reference>
+	</sales_guest_view>
+	<sales_order_history>
+    	<reference name="sales.order.history">
+    		<action method="setTemplate">
+    	    	<template>placetopay/sales/order/history.phtml</template>
+        	</action>
+   	 	</reference>
+	</sales_order_history>
+</layout>

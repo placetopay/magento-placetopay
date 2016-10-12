@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PlacetoPay Connector for Magento
+ *
+ * @category   EGM
+ * @package    EGM_PlacetoPay
+ * @copyright  Copyright (c) 2011-2015 EGM Ingenieria sin fronteras S.A.S.
+ * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+-->
+<config>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <placetopay>
+                                        <title>PlacetoPay Section</title>
+                                    </placetopay>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

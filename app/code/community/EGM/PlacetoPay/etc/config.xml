@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PlacetoPay Connector for Magento
+ *
+ * @category   EGM
+ * @package    EGM_PlacetoPay
+ * @copyright  Copyright (c) 2009-2015 EGM Ingenieria sin fronteras S.A.S.
+ * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+-->
+<config>
+    <modules>
+        <EGM_PlacetoPay>
+            <!-- declara la version del modulo usada para actualizaciones de la base de datos -->
+            <version>1.5.6.4</version>
+        </EGM_PlacetoPay>
+    </modules>
+
+    <global>
+        <!-- declare model group for new module -->
+        <models>
+            <!-- model group alias to be used in Mage::getModel('newmodule/...') -->
+            <placetopay>
+                <!-- base class name for the model group -->
+                <class>EGM_PlacetoPay_Model</class>
+                <resourceModel>placetopay_mysql4</resourceModel>
+            </placetopay>
+            <placetopay_mysql4>
+                <class>EGM_PlacetoPay_Model_Mysql4</class>
+                <entities>
+                    <api_debug>
+                        <table>placetopay_api_debug</table>
+                    </api_debug>
+                </entities>
+            </placetopay_mysql4>
+            <customer>
+                <rewrite>
+                    <customer>EGM_PlacetoPay_Model_Customer</customer>
+                </rewrite>
+            </customer>
+        </models>
+
+        <!-- declare resource setup for new module -->
+        <resources>
+            <!-- resource identifier -->
+            <placetopay_setup>
+                <!-- specify that this resource is a setup resource and used for upgrades -->
+                <setup>
+                    <!-- which module to look for install/upgrade files in -->
+                    <module>EGM_PlacetoPay</module>
+                    <class>EGM_PlacetoPay_Model_Mysql4_Setup</class>
+                </setup>
+            </placetopay_setup>
+        </resources>
+
+        <!-- IMPORTANT: if you use your own namespace (i.e. CompanyName) you also have to declare blocks group for new module. See topic: http://www.magentocommerce.com/boards/viewthread/22416/#t102732 -->
+        <blocks>
+            <placetopay>
+                <class>EGM_PlacetoPay_Block</class>
+            </placetopay>
+        </blocks>
+
+        <sales>
+            <order>
+                <statuses>
+                    <!-- se mantiene por compatibilidad -->
+                    <pending_placetopay translate="label">
+                        <label>Pending payment</label>
+                    </pending_placetopay>
+                    <APPROVED translate="label">
+                        <label>APPROVED</label>
+                    </APPROVED>
+                    <ERROR translate="label">
+                        <label>ERROR</label>
+                    </ERROR>
+                    <DECLINED translate="label">
+                        <label>DECLINED</label>
+                    </DECLINED>
+                    <UNKNOWN translate="label">
+                        <label>UNKNOWN</label>
+                    </UNKNOWN>
+                </statuses>
+                <states>
+                    <processing translate="label">
+                        <statuses>
+                            <APPROVED/>
+                        </statuses>
+                    </processing>
+                    <pending_payment translate="label">
+                        <statuses>
+                            <UNKNOWN/>
+                        </statuses>
+                    </pending_payment>
+                    <canceled translate="label">
+                        <statuses>
+                            <ERROR/>
+                            <DECLINED/>
+                        </statuses>
+                    </canceled>
+                </states>
+            </order>
+        </sales>
+        <payment>
+            <groups>
+                <placetopay>PlacetoPay</placetopay>
+            </groups>
+        </payment>
+        <helpers>
+            <placetopay>
+                <class>EGM_PlacetoPay_Helper</class>
+            </placetopay>
+        </helpers>
+    </global>
+
+    <frontend>
+        <secure_url>
+            <placetopay_processing>/placetopay/processing</placetopay_processing>
+        </secure_url>
+        <routers>
+            <placetopay>
+                <use>standard</use>
+                <args>
+                    <module>EGM_PlacetoPay</module>
+                    <frontName>placetopay</frontName>
+                </args>
+            </placetopay>
+        </routers>
+        <translate>
+            <modules>
+                <EGM_PlacetoPay>
+                    <files>
+                        <default>EGM_PlacetoPay.csv</default>
+                    </files>
+                </EGM_PlacetoPay>
+            </modules>
+        </translate>
+        <layout>
+            <updates>
+                <placetopay>
+                    <file>placetopay.xml</file>
+                </placetopay>
+            </updates>
+            <sales_order_view>
+                <reference name="sales.order.info">
+                    <action method="setTemplate">
+                        <template>placetopay/sales/order/info.phtml</template>
+                    </action>
+                </reference>
+            </sales_order_view>
+        </layout>
+    </frontend>
+
+    <adminhtml>
+        <translate>
+            <modules>
+                <EGM_PlacetoPay>
+                    <files>
+                        <default>EGM_PlacetoPay.csv</default>
+                    </files>
+                </EGM_PlacetoPay>
+            </modules>
+        </translate>
+    </adminhtml>
+
+    <!-- define la tarea automatica que resuelve las transacciones pendientes -->
+    <crontab>
+        <jobs>
+            <placetopay_resolve_transactions>
+                <!-- corre cada 12 minutos, se recomienda un valor superior a 10 minutos -->
+                <schedule>
+                    <cron_expr>*/12 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>placetopay/observer::resolvePendingTransactions</model>
+                </run>
+            </placetopay_resolve_transactions>
+        </jobs>
+    </crontab>
+
+    <!-- declare default configuration values for this module -->
+    <default>
+        <placetopay>
+            <!-- nombre del establecimiento -->
+            <merchantname></merchantname>
+            <!-- nit del establecimiento -->
+            <merchantdocument></merchantdocument>
+            <gpg>
+                <!-- ruta completa del GPG -->
+                <gpgpath></gpgpath>
+                <!-- ubicacion del anillo de llaves -->
+                <gpghomedir></gpghomedir>
+                <!-- identificador de la llave del establecimiento -->
+                <keyid></keyid>
+                <!-- contraseña usada para abrir la llave -->
+                <passphrase></passphrase>
+                <!-- identificador de la llave de PlacetoPay -->
+                <recipientkeyid></recipientkeyid>
+            </gpg>
+        </placetopay>
+        <!-- 'payment' configuration section (tab) -->
+        <payment>
+            <!-- 'placetopay' configuration group (fieldset) -->
+            <placetopay_standard>
+                <!-- por defecto el medio de pago esta inactivo -->
+                <active>0</active>
+                <!-- modelo para manejar la logica de este medio de pago -->
+                <model>placetopay/standard</model>
+                <!-- nombre del medio de pago usado en las páginas -->
+                <title>PlacetoPay - Tarjetas de crédito y débitos a cuenta</title>
+                <!-- informacion para la descripcion -->
+                <description>Pago en PlacetoPay - %s</description>
+                <!-- determina si permite o no paises especificos -->
+                <allowspecific>0</allowspecific>
+                <!-- identificador de sitio asignado por PlacetoPay -->
+                <customersiteid></customersiteid>
+                <!-- define que logos mostrar en el proceso de pago -->
+                <display_logo>CR_VS,RM_MC,CR_AM,CR_DN,_PSE_</display_logo>
+                <!-- determina la página por defecto a la cual ir al finalizar el pago -->
+                <final_page>order_info</final_page>
+                <group>placetopay</group>
+            </placetopay_standard>
+            <placetopay_promotion>
+                <!-- por defecto el medio de pago esta inactivo -->
+                <active>0</active>
+                <!-- modelo para manejar la logica de este medio de pago -->
+                <model>placetopay/promotion</model>
+                <!-- nombre del medio de pago usado en las páginas -->
+                <title>PlacetoPay - Promociones especiales</title>
+                <!-- informacion para la descripcion -->
+                <description>Pago en PlacetoPay - %s</description>
+                <!-- determina si permite o no paises especificos -->
+                <allowspecific>0</allowspecific>
+                <!-- identificador de sitio asignado por PlacetoPay -->
+                <customersiteid></customersiteid>
+                <!-- define que logos mostrar en el proceso de pago -->
+                <display_logo>CR_AM</display_logo>
+                <promo_hours>12,13,21,22</promo_hours>
+                <!-- determina la página por defecto a la cual ir al finalizar el pago -->
+                <final_page>order_info</final_page>
+                <group>placetopay</group>
+            </placetopay_promotion>
+        </payment>
+    </default>
+</config>
