@@ -1020,7 +1020,7 @@ class PlacetoPay
 
     public function getWSDLClient()
     {
-        $wsdl = 'http://redirection.p2p.dev/soap/redirect?wsdl';
+        $wsdl = 'https://test.placetopay.com/redirection/soap/redirect?wsdl';
         $config = [
             'authentication' => SOAP_AUTHENTICATION_BASIC,
             'soap_version' => SOAP_1_2,
@@ -1028,7 +1028,7 @@ class PlacetoPay
             'cache_wsdl' => WSDL_CACHE_NONE,
             'trace' => false,
             'encoding' => 'UTF-8',
-            'location' => 'http://redirection.p2p.dev/soap/redirect'
+            'location' => 'https://test.placetopay.com/redirection/soap/redirect'
         ];
 
         $client = new SoapClient($wsdl, $config);
