@@ -125,22 +125,9 @@
 
     <default>
         <placetopay>
-            <!-- nombre del establecimiento -->
             <merchantname></merchantname>
-            <!-- nit del establecimiento -->
             <merchantdocument></merchantdocument>
-            <gpg>
-                <!-- ruta completa del GPG -->
-                <gpgpath></gpgpath>
-                <!-- ubicacion del anillo de llaves -->
-                <gpghomedir></gpghomedir>
-                <!-- identificador de la llave del establecimiento -->
-                <keyid></keyid>
-                <!-- contraseña usada para abrir la llave -->
-                <passphrase></passphrase>
-                <!-- identificador de la llave de PlacetoPay -->
-                <recipientkeyid></recipientkeyid>
-            </gpg>
+            <environment>testing</environment>
         </placetopay>
         <!-- 'payment' configuration section (tab) -->
         <payment>

@@ -20,7 +20,7 @@ require_once(__DIR__ . '/../bootstrap.php');
 abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_Abstract
 {
     const VERSION = '2.0.0';
-    const WS_URL = 'http://redirection.p2p.dev/soap/redirect';
+    const WS_URL = 'https://api.placetopay.com/redirection/soap/redirect';
 
     /**
      * unique internal payment method identifier
@@ -200,10 +200,18 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     public function gateway()
     {
         if (!$this->gateway) {
+            $envs = [
+                'production' => 'https://api.placetopay.com/redirection/soap/redirect',
+                'testing' => 'https://test.placetopay.com/redirection/soap/redirect',
+                'development' => 'http://redirection.dnetix.co/soap/redirect',
+            ];
+            $url = isset($envs[self::getModuleConfig('environment')]) ? $envs[self::getModuleConfig('environment')] : self::WS_URL;
+
             $this->gateway = new PlacetoPay([
+                'wsdl' => $url . '?wsdl',
                 'login' => $this->getConfig('login'),
                 'tranKey' => $this->getConfig('trankey'),
-                'location' => self::WS_URL,
+                'location' => $url,
             ]);
         }
         return $this->gateway;
@@ -460,156 +468,6 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                     ->save();
             }
         }
-    }
-
-    /**
-     * Asienta el pago
-     * @param Mage_Sales_Model_Order $order
-     * @param PlacetoPay $p2p
-     */
-    public function settlePayment(Mage_Sales_Model_Order $order)
-    {
-        $wasCancelled = false;
-        switch ($p2p->responseCode()) {
-            case PlacetoPay::P2P_ERROR:
-                if ($order->getStatus() != Mage_Sales_Model_Order::STATE_CANCELED) {
-                    $comment = Mage::helper('placetopay')->__('Transaction Failed');
-                    $state = Mage_Sales_Model_Order::STATE_CANCELED;
-                    $status = Mage_Payment_Model_Method_Abstract::STATUS_ERROR;
-                }
-                break;
-            case PlacetoPay::P2P_DECLINED:
-                if ($order->getState() != Mage_Sales_Model_Order::STATE_CANCELED) {
-                    $comment = Mage::helper('placetopay')->__('Transaction Rejected');
-                    $state = Mage_Sales_Model_Order::STATE_CANCELED;
-                    $status = Mage_Payment_Model_Method_Abstract::STATUS_DECLINED;
-                }
-                break;
-            case PlacetoPay::P2P_APPROVED:
-            case PlacetoPay::P2P_DUPLICATE:
-                // verifica que no se haya completado para no reprocesar el pedido
-                if ($order->getState() != Mage_Sales_Model_Order::STATE_PROCESSING) {
-                    $comment = Mage::helper('placetopay')->__('Transaction Approved');
-                    $state = Mage_Sales_Model_Order::STATE_PROCESSING;
-                    $status = Mage_Payment_Model_Method_Abstract::STATUS_APPROVED;
-                }
-                if ($order->getState() == Mage_Sales_Model_Order::STATE_CANCELED) {
-                    $wasCancelled = true;
-                }
-
-                break;
-            case PlacetoPay::P2P_PENDING:
-                if (($order->getState() == Mage_Sales_Model_Order::STATE_PENDING_PAYMENT) || ($order->getState() == Mage_Sales_Model_Order::STATE_NEW)) {
-                    $comment = Mage::helper('placetopay')->__('Transaction Pending');
-                    $state = Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
-                    $status = Mage_Payment_Model_Method_Abstract::STATUS_UNKNOWN;
-                }
-                break;
-        }
-
-        // determina si realiza la actualizacion de la orden
-        if (!empty($comment)) {
-            // asocia los valores retornados al medio de pago para los metodos de captura y cancelacion
-            $this->p2pStatus = $status;
-            $wasPaymentInformationChanged = $this->_importPaymentInformation($order, $p2p, $status);
-
-            // si el estado es procesado, remite el email
-            if ($state == Mage_Sales_Model_Order::STATE_PROCESSING) {
-                // almacena el n�mero de autorizacion
-                $order->getPayment()->setLastTransId($p2p->getAuthorization());
-                $order->setState($state, $status, $comment)
-                    ->save();
-
-                if ($wasCancelled) {
-                    /**
-                     * Set the product ID
-                     */
-                    $EntityId = $order->getEntityId();
-
-                    // Un-cancel the specified order and the items related
-                    $order = Mage::getModel('sales/order')->load($EntityId);
-                    $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING);
-                    $order->setStatus(Mage_Payment_Model_Method_Abstract::STATUS_APPROVED);
-                    $order->save();
-
-                    foreach ($order->getAllItems() as $item) {
-                        $item->setQtyCanceled(0);
-                        $item->save();
-                    }
-                }
-
-                // agrega la factura
-                $this->_createInvoice($order);
-                // envia el correo con la orden
-                $order->sendNewOrderEmail()
-                    ->setEmailSent(true)
-                    ->save();
-
-                $wasPaymentInformationChanged = true;
-            } elseif ($state == Mage_Sales_Model_Order::STATE_CANCELED) {
-                // establece el pago como declinado y cancela la orden
-                $order
-                    ->cancel()
-                    ->addStatusToHistory($status, $comment)
-                    ->save();
-                $wasPaymentInformationChanged = true;
-            } elseif ($state == Mage_Sales_Model_Order::STATE_PENDING_PAYMENT) {
-                $order->getPayment()->setLastTransId($p2p->getAuthorization());
-                // agrega un comentario a la historia
-                $order
-                    ->addStatusToHistory($status, $comment)
-                    ->save();
-                $wasPaymentInformationChanged = true;
-            }
-            if ($wasPaymentInformationChanged)
-                $order->getPayment()->save();
-        }
-
-    }
-
-    /**
-     * TODO: DC
-     * @param Mage_Sales_Model_Order $order
-     * @param $reference
-     * @return mixed
-     */
-    public function processPayment($order, $reference)
-    {
-        $p2p = new PlacetoPay();
-        // Login y tranKey
-        $p2p->setLogin($this->getConfigData('login'));
-        $p2p->setTranKey($this->getConfigData('trankey'));
-
-        $p2p->getPaymentResponse((int)$order->getBaseDiscountCanceled());
-        // procesa el asiento de la orden acorde al resultado dado por PlacetoPay
-        $this->settlePlacetoPayPayment($order, $p2p);
-
-        return $order->getEntityId();
-    }
-
-    /**
-     * Asocia la informaci�n del pago retornada por PlacetoPay al objeto de pago
-     * Retorna true si hubo cambios en la informaci�n
-     *
-     * @param Mage_Sales_Model_Order $order
-     * @param PlacetoPay $p2p
-     * @param string $status
-     * @return bool
-     */
-    protected function _importPaymentInformation(Mage_Sales_Model_Order $order, PlacetoPay $p2p, $status)
-    {
-        $payment = $order->getPayment();
-        $was = $payment->getAdditionalInformation();
-        $from = [
-            EGM_PlacetoPay_Model_Info::RESPONSE_STATUS => $status,
-            EGM_PlacetoPay_Model_Info::TRANSACTION_DATE => $p2p->response()->status->date,
-            EGM_PlacetoPay_Model_Info::RESPONSE_CODE => $p2p->response()->status->reason,
-            EGM_PlacetoPay_Model_Info::RESPONSE_MESSAGE => html_entity_decode($p2p->response()->status->message),
-            EGM_PlacetoPay_Model_Info::REFERENCE => $p2p->response()->payment->reference,
-        ];
-
-        Mage::getSingleton('placetopay/info')->importToPayment($from, $payment);
-        return $was != $payment->getAdditionalInformation();
     }
 
 }

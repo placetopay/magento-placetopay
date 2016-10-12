@@ -84,3 +84,6 @@
 "transaction_rejected","Transacción declinada"
 "transaction_pending","Transacción pendiente"
 "redirection_link","Detalle Pago"
+"env_production","Producción"
+"env_testing","Pruebas"
+"env_development","Desarrollo"
