@@ -48,9 +48,8 @@ class EGM_PlacetoPay_Block_Form extends Mage_Payment_Block_Form
 
     public function hasPendingOrders()
     {
-        // obtiene el usuario actual
         $customer = Mage::getSingleton('customer/session')->getCustomer()->getId();
-        // busca las ordenes que pertecen al usuario y que estan en pendiente
+
         $collection = Mage::getResourceModel('sales/order_collection')
             ->addAttributeToSelect('*')
             ->addFieldToFilter('customer_id', $customer)
@@ -63,7 +62,6 @@ class EGM_PlacetoPay_Block_Form extends Mage_Payment_Block_Form
             ->load()
             ->getItems();
 
-        // trae una de las ordenes pendientes
         $this->countPendingOrders = sizeof($collection);
         if ($this->countPendingOrders > 0) {
             $o = reset($collection);
@@ -74,16 +72,16 @@ class EGM_PlacetoPay_Block_Form extends Mage_Payment_Block_Form
         return ($this->countPendingOrders > 0);
     }
 
-    /**
-     * Retorna la variable de configuración
-     * @return boolean
-     */
-    public function hasCifin()
-    {
-        // obtiene el nombre del medio de pago
-        $paymentCode = $this->getMethod()->getCode();
-        // obtiene la configuracion de PlacetoPay
-        $fields = Mage::getStoreConfig('payment/' . $paymentCode);
-        return $fields['hascifin'];
-    }
+//    /**
+//     * Retorna la variable de configuración
+//     * @return boolean
+//     */
+//    public function hasCifin()
+//    {
+//        // obtiene el nombre del medio de pago
+//        $paymentCode = $this->getMethod()->getCode();
+//        // obtiene la configuracion de PlacetoPay
+//        $fields = Mage::getStoreConfig('payment/' . $paymentCode);
+//        return $fields['hascifin'];
+//    }
 }

@@ -1,22 +1,5 @@
 <?php
-/**
- * PlacetoPay Connector for Magento
- *
- * @category   EGM
- * @package    EGM_PlacetoPay
- * @copyright  Copyright (c) 2009-2015 EGM Ingenieria sin fronteras S.A.S.
- * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- * @version    $Id: ProcessingController.php,v 1.0.9 2015-04-20 10:13:00-05 ingenieria Exp $
- */
 
-/**
- * PlacetoPay Processing Checkout Controller
- *
- * @category   EGM
- * @package    EGM_PlacetoPay
- * @author     Enrique Garcia M. <ingenieria@egm.co>
- * @since      martes, 17 de noviembre de 2009
- */
 class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Action
 {
     /**
@@ -38,17 +21,14 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
     }
 
     /**
-     * Cuando un usuario selecciona PlacetoPay en la página Checkout/Payment
-     *
+     * When the user clicks on the proceed to payment button
+     * @return Mage_Core_Controller_Varien_Action
      */
     public function redirectAction()
     {
+        $session = $this->_getCheckout();
+
         try {
-            /**
-             * @var Mage_Checkout_Model_Session $session
-             */
-            $session = $this->_getCheckout();
-            // obtiene la orden
             /**
              * @var Mage_Sales_Model_Order $order
              */
@@ -58,29 +38,25 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
                 Mage::throwException(Mage::helper('placetopay')->__('No order for processing was found.'));
             }
 
-            // obtiene la URL para redirección
             /**
-             * @var EGM_PlacetoPay_Model_Abstract $p2pAbsctract
+             * @var EGM_PlacetoPay_Model_Abstract $p2p
              */
-            $p2pAbsctract = $order->getPayment()->getMethodInstance();
-            $url = $p2pAbsctract->getCheckoutRedirect($order);
-            if (!$url) {
-                $session->addError($p2pAbsctract->errorMessage());
-                Mage::log($p2pAbsctract->errorMessage());
-                return $this->_redirect('checkout/cart');
-            }
+            $p2p = $order->getPayment()->getMethodInstance();
+            $url = $p2p->getCheckoutRedirect($order);
 
-            // almacena el identificador del carro y de la orden en la sesion
-            // inactiva el carrito para que no pueda ser modificado
             $session->setPlacetoPayQuoteId($session->getQuoteId());
             $session->setPlacetoPayRealOrderId($session->getLastRealOrderId());
             $session->getQuote()->setIsActive(false)->save();
             $session->clear();
 
-            Mage::app()->getResponse()->setRedirect($url);
+            $order->setStatus('pending');
+            $order->save();
+
+            return $this->_redirectUrl($url);
         } catch (Exception $e) {
-            Mage::logException($e);
-            return $this->_redirect('checkout/cart');
+            Mage::log($e->getMessage());
+            $session->addError($e->getMessage());
+            return $this->_redirectError('checkout/cart');
         }
     }
 
@@ -90,61 +66,102 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
     public function responseAction()
     {
         try {
-            // obtiene los datos de la session
             $session = $this->_getCheckout();
             $quoteId = $session->getPlacetoPayQuoteId();
-            if ($quoteId) {
-                // obtiene la orden asociada a la sesión
-                $order = Mage::getModel('sales/order')->loadByIncrementId($session->getPlacetoPayRealOrderId());
+            $orderId = $session->getPlacetoPayRealOrderId();
+
+            if ($orderId && Mage::app()->getRequest()->getParam('reference') == $orderId) {
+
+                /**
+                 * @var Mage_Sales_Model_Order $order
+                 */
+                $order = Mage::getModel('sales/order')->loadByIncrementId($orderId);
                 if (!$order->getId())
                     Mage::throwException(Mage::helper('placetopay')->__('Order not found.'));
 
-                // obtiene el nombre del medio de pago
-                $paymentCode = $order->getPayment()->getMethodInstance()->getCode();
+                $payment = $order->getPayment();
+                /**
+                 * @var EGM_PlacetoPay_Model_Abstract $p2p
+                 */
+                $p2p = $payment->getMethodInstance();
 
                 // valida que la orden tenga a PlacetoPay como medio de pago
-                if (0 !== strpos($paymentCode, 'placetopay_'))
+                if (0 !== strpos($p2p->getCode(), 'placetopay_'))
                     Mage::throwException(Mage::helper('placetopay')->__('Unknown payment method.'));
 
-                // procesa el pago
-                $orderId = $order->getPayment()->getMethodInstance()->processPayment($order, $_GET['order']);
-                $p2pInfo = $order->getPayment()->getAdditionalInformation();
+                if ($p2p->isPendingOrder($order)) {
+                    $response = $p2p->resolve($order, $payment);
+                    $status = $response->status();
+                } else {
+                    $status = $p2p->parseOrderState($order);
+                }
 
-                // determina cual flujo seguir, si ir al flujo normal de magento a ir a visualizar la orden
-                if (Mage::getStoreConfig('payment/' . $paymentCode . '/final_page') == 'magento_default') {
-                    // si el pago es exitoso va a la de checkout
-                    if (isset($p2pInfo['placetopay_status'])
-                        && ($p2pInfo['placetopay_status'] == Mage_Payment_Model_Method_Abstract::STATUS_APPROVED)
-                    ) {
+                if (Mage::getStoreConfig('payment/' . $p2p->getCode() . '/final_page') == 'magento_default') {
+                    if ($status->isApproved()) {
                         $this->_getCheckout()->setLastSuccessQuoteId($quoteId);
-                        $this->_redirect('checkout/onepage/success', array('_secure' => true));
-                    } // sino va al carrito de compras con los articulos nuevamente
-                    else {
+                        return $this->_redirect('checkout/onepage/success', ['_secure' => true]);
+                    } else if ($status->isRejected()) {
                         $quote = Mage::getModel('sales/quote')->load($quoteId);
                         if ($quote->getId()) {
                             $quote->setIsActive(true)->save();
                             $session->setQuoteId($quoteId);
                         }
-                        if (isset($p2pInfo['placetopay_response_message']))
-                            $session->addError($p2pInfo['placetopay_response_message']);
-                        $this->_redirect('checkout/cart');
-                    }
-                } // va a la página del estado de la orden
-                else {
-                    if (Mage::getSingleton('customer/session')->isLoggedIn()) {
-                        Mage::dispatchEvent('checkout_onepage_controller_success_action', array('order_ids' => array($orderId)));
-                        $this->_redirect('sales/order/view/order_id/' . $orderId);
+                        return $this->_redirect('checkout/cart');
                     } else {
-                        $this->_redirect('sales/guest/form/');
+                        $session->addSuccess($p2p::trans('transaction_pending_message'));
+                        return $this->_redirect('checkout/cart');
+                    }
+                } else {
+                    if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+                        Mage::dispatchEvent('checkout_onepage_controller_success_action', ['order_ids' => [$orderId]]);
+                        return $this->_redirect('sales/order/view/order_id/' . $orderId);
+                    } else {
+                        return $this->_redirect('sales/guest/form/');
                     }
                 }
-                return;
+
+            } else {
+                Mage::throwException(Mage::helper('placetopay')->__('order_not_in_session'));
             }
         } catch (Mage_Core_Exception $e) {
             $this->_getCheckout()->addError($e->getMessage());
         } catch (Exception $e) {
-            Mage::logException($e);
+            Mage::log($e->getMessage());
         }
-        $this->_redirect('checkout/cart');
+
+        return $this->_redirect('checkout/cart');
+    }
+
+    /**
+     * Redirection notification endpoint
+     */
+    public function notifyAction()
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+        Mage::log('Notification: ' . serialize($data));
+        if ($data && isset($data['reference'])){
+            /**
+             * @var Mage_Sales_Model_Order $order
+             */
+            $order = Mage::getModel('sales/order')->loadByIncrementId($data['reference']);
+            if (!$order->getId()) {
+                Mage::log('Non existent order: ' . serialize($data));
+                Mage::throwException(Mage::helper('placetopay')->__('Order not found.'));
+            }
+
+            /**
+             * @var EGM_PlacetoPay_Model_Abstract $p2p
+             */
+            $p2p = $order->getPayment()->getMethodInstance();
+            $notification = $p2p->gateway()->readNotification($data);
+
+            if ($notification->isValidNotification()){
+                Mage::log("Notification {$order->getId()} valid. {$notification->status()->status()}");
+                $p2p->settleOrderStatus($notification->status(), $order);
+            }else{
+                Mage::log('Invalid notification: ' . serialize($data));
+                Mage::log('Invalid notification: ' . serialize($notification));
+            }
+        }
     }
 }

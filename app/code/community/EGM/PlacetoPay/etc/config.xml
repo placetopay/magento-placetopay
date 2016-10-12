@@ -1,24 +1,12 @@
 <?xml version="1.0"?>
-<!--
-/**
- * PlacetoPay Connector for Magento
- *
- * @category   EGM
- * @package    EGM_PlacetoPay
- * @copyright  Copyright (c) 2009-2015 EGM Ingenieria sin fronteras S.A.S.
- * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- */
--->
 <config>
     <modules>
         <EGM_PlacetoPay>
-            <!-- declara la version del modulo usada para actualizaciones de la base de datos -->
-            <version>1.5.6.4</version>
+            <version>2.0.0.0</version>
         </EGM_PlacetoPay>
     </modules>
 
     <global>
-        <!-- declare model group for new module -->
         <models>
             <!-- model group alias to be used in Mage::getModel('newmodule/...') -->
             <placetopay>
@@ -60,47 +48,6 @@
                 <class>EGM_PlacetoPay_Block</class>
             </placetopay>
         </blocks>
-
-        <sales>
-            <order>
-                <statuses>
-                    <!-- se mantiene por compatibilidad -->
-                    <pending_placetopay translate="label">
-                        <label>Pending payment</label>
-                    </pending_placetopay>
-                    <APPROVED translate="label">
-                        <label>APPROVED</label>
-                    </APPROVED>
-                    <ERROR translate="label">
-                        <label>ERROR</label>
-                    </ERROR>
-                    <DECLINED translate="label">
-                        <label>DECLINED</label>
-                    </DECLINED>
-                    <UNKNOWN translate="label">
-                        <label>UNKNOWN</label>
-                    </UNKNOWN>
-                </statuses>
-                <states>
-                    <processing translate="label">
-                        <statuses>
-                            <APPROVED/>
-                        </statuses>
-                    </processing>
-                    <pending_payment translate="label">
-                        <statuses>
-                            <UNKNOWN/>
-                        </statuses>
-                    </pending_payment>
-                    <canceled translate="label">
-                        <statuses>
-                            <ERROR/>
-                            <DECLINED/>
-                        </statuses>
-                    </canceled>
-                </states>
-            </order>
-        </sales>
         <payment>
             <groups>
                 <placetopay>PlacetoPay</placetopay>
@@ -163,11 +110,9 @@
         </translate>
     </adminhtml>
 
-    <!-- define la tarea automatica que resuelve las transacciones pendientes -->
     <crontab>
         <jobs>
             <placetopay_resolve_transactions>
-                <!-- corre cada 12 minutos, se recomienda un valor superior a 10 minutos -->
                 <schedule>
                     <cron_expr>*/12 * * * *</cron_expr>
                 </schedule>
@@ -178,7 +123,6 @@
         </jobs>
     </crontab>
 
-    <!-- declare default configuration values for this module -->
     <default>
         <placetopay>
             <!-- nombre del establecimiento -->
@@ -200,43 +144,24 @@
         </placetopay>
         <!-- 'payment' configuration section (tab) -->
         <payment>
-            <!-- 'placetopay' configuration group (fieldset) -->
             <placetopay_standard>
-                <!-- por defecto el medio de pago esta inactivo -->
                 <active>0</active>
-                <!-- modelo para manejar la logica de este medio de pago -->
                 <model>placetopay/standard</model>
-                <!-- nombre del medio de pago usado en las páginas -->
                 <title>PlacetoPay - Tarjetas de crédito y débitos a cuenta</title>
-                <!-- informacion para la descripcion -->
                 <description>Pago en PlacetoPay</description>
-                <!-- determina si permite o no paises especificos -->
                 <allowspecific>0</allowspecific>
-                <!-- identificador de sitio asignado por PlacetoPay -->
-                <customersiteid></customersiteid>
-                <!-- define que logos mostrar en el proceso de pago -->
                 <display_logo>CR_VS,RM_MC,CR_AM,CR_DN,_PSE_</display_logo>
-                <!-- determina la página por defecto a la cual ir al finalizar el pago -->
                 <final_page>order_info</final_page>
                 <group>placetopay</group>
             </placetopay_standard>
             <placetopay_promotion>
-                <!-- por defecto el medio de pago esta inactivo -->
                 <active>0</active>
-                <!-- modelo para manejar la logica de este medio de pago -->
                 <model>placetopay/promotion</model>
-                <!-- nombre del medio de pago usado en las páginas -->
                 <title>PlacetoPay - Promociones especiales</title>
-                <!-- informacion para la descripcion -->
                 <description>Pago en PlacetoPay</description>
-                <!-- determina si permite o no paises especificos -->
                 <allowspecific>0</allowspecific>
-                <!-- identificador de sitio asignado por PlacetoPay -->
-                <customersiteid></customersiteid>
-                <!-- define que logos mostrar en el proceso de pago -->
                 <display_logo>CR_AM</display_logo>
                 <promo_hours>12,13,21,22</promo_hours>
-                <!-- determina la página por defecto a la cual ir al finalizar el pago -->
                 <final_page>order_info</final_page>
                 <group>placetopay</group>
             </placetopay_promotion>
