@@ -449,7 +449,6 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                     ->save();
             } else if ($status->isRejected()) {
                 $order->cancel()
-                    ->addStatusHistoryComment($comment, $orderStatus)
                     ->save();
             } else {
                 $order->setState($state, $orderStatus, $comment)

@@ -21,11 +21,11 @@ class EGM_PlacetoPay_Model_Observer
 {
     public function resolvePendingTransactions()
     {
-        // notifica de la operacion
-        Mage::log('PlacetoPay resolviendo transacciones pendientes');
+        Mage::log('Resolving PlacetoPay pending orders');
 
-        // obtiene todas las ordenes de PlacetoPay que estan en estado pendiente y que tienen
-        // mas de 7 minutos de haber sido creadas
+        /**
+         * @var Mage_Sales_Model_Order[] $collection
+         */
         $collection = Mage::getModel('sales/order')->getCollection()
             //->addAttributeToFilter('updated_at', array('lt' => date('Y-m-d H:i:s', Mage::getModel('core/date')->timestamp(time() - 15 * 60))))
             ->addAttributeToSelect('increment_id')
@@ -42,32 +42,19 @@ class EGM_PlacetoPay_Model_Observer
             ->load()
             ->getItems();
 
-        // recorre las operaciones halladas solo si son con PlacetoPay
         if (sizeof($collection))
-            foreach ($collection as $obj) {
-                // recupera toda la informacion de la orden
-                $order = Mage::getModel('sales/order')->loadByIncrementId($obj->getIncrementId());
-                $payment = $order->getPayment()->getMethodInstance();
-                $paymentMethod = $payment->getCode();
-                if (($paymentMethod == 'placetopay_standard') || ($paymentMethod == 'placetopay_promotion')) {
-                    // instancia PlacetoPay y busca la transaccion
-                    $p2p = new PlacetoPay();
-                    $rc = $p2p->queryPayment($payment->getConfigData('customersiteid'), $order->getIncrementId(), $order->getOrderCurrencyCode(), Mage::app()->getStore()->roundPrice($order->getTotalDue()));
-                    if (($rc == PlacetoPay::P2P_ERROR) && ($p2p->getErrorCode() == 'HTTP')) {
-                        // hay un problema de conectividad del Webservice para resolver la operacion
-                        // realice un registro y continue con la siguiente operacion
-                        Mage::log('Orden # ' . $order->getIncrementId() . "\n" . $p2p->getErrorMessage());
-                        continue;
-                    } else
-                        Mage::log('Orden # ' . $order->getIncrementId() . "\n" . $p2p->getErrorCode() . ' - ' . $p2p->getErrorMessage());
+            foreach ($collection as $order) {
+                $order = $order->loadByIncrementId($order->getIncrementId());
+                $payment = $order->getPayment();
+                $p2p = $payment->getMethodInstance();
 
-                    // procesa el resultado de la operacion
-                    $payment->settlePlacetoPayPayment($order, $rc, $p2p);
-
-                    // libera los recursos
-                    unset($p2p);
-                    unset($payment);
+                if ($p2p instanceof EGM_PlacetoPay_Model_Abstract) {
+                    $response = $p2p->resolve($order, $payment);
+                    Mage::log('Resolving ' . $order->getId() . ' [' . $response->status()->status() . '] ' . $response->status()->message());
                 }
+
+                unset($p2p);
+                unset($payment);
             }
     }
 }
