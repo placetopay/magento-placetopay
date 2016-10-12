@@ -59,14 +59,20 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
             }
 
             // obtiene la URL para redirección
-            $url = $order->getPayment()->getMethodInstance()->getCheckoutRedirect($order);
-            if (!$url)
-                Mage::throwException(Mage::helper('placetopay')->__('Can not generate secure data to connect with PlacetoPay.'));
+            /**
+             * @var EGM_PlacetoPay_Model_Abstract $p2pAbsctract
+             */
+            $p2pAbsctract = $order->getPayment()->getMethodInstance();
+            $url = $p2pAbsctract->getCheckoutRedirect($order);
+            if (!$url) {
+                $session->addError($p2pAbsctract->errorMessage());
+                Mage::log($p2pAbsctract->errorMessage());
+                return $this->_redirect('checkout/cart');
+            }
 
             // almacena el identificador del carro y de la orden en la sesion
             // inactiva el carrito para que no pueda ser modificado
             $session->setPlacetoPayQuoteId($session->getQuoteId());
-            //Mage::log([$session->getQuoteId(),$order->getQuoteId(),$session->getLastRealOrderId()]);
             $session->setPlacetoPayRealOrderId($session->getLastRealOrderId());
             $session->getQuote()->setIsActive(false)->save();
             $session->clear();
@@ -74,7 +80,7 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
             Mage::app()->getResponse()->setRedirect($url);
         } catch (Exception $e) {
             Mage::logException($e);
-            $this->_redirect('checkout/cart');
+            return $this->_redirect('checkout/cart');
         }
     }
 

@@ -19,6 +19,9 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     protected $_formBlockType = 'placetopay/form';
     protected $_infoBlockType = 'placetopay/info';
 
+    protected $errorCode;
+    protected $errorMessage;
+
     /**
      * Opciones de disponiblidad
      */
@@ -294,7 +297,9 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
         $p2p = $this->getPlacetoPayObj();
         $url = $p2p->getPaymentRedirect();
         if (empty($url)) {
-            error_log($p2p->getErrorCode() . ' - ' . $p2p->getErrorMessage());
+            $this->errorCode = $p2p->getErrorCode();
+            $this->errorMessage = $p2p->getErrorMessage();
+            Mage::log($p2p->getErrorCode() . ' - ' . $p2p->getErrorMessage());
         }else {
             // TODO: DC Please learn where to put this
             $order->setBaseDiscountCanceled($p2p->serviceResponseCode())->save();
@@ -434,12 +439,6 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                 $order->getPayment()->save();
         }
 
-//        var_dump($state);
-//        var_dump($status);
-//        var_dump($comment);
-//        var_dump($wasCancelled);
-//        var_dump($wasPaymentInformationChanged);
-//        die();
     }
 
     /**
@@ -500,5 +499,15 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
         }
         $path = 'payment/' . $this->getCode() . '/' . $field;
         return Mage::getStoreConfig($path, $storeId);
+    }
+
+    public function errorCode()
+    {
+        return $this->errorCode;
+    }
+
+    public function errorMessage()
+    {
+        return $this->errorMessage;
     }
 }

@@ -1053,14 +1053,12 @@ class PlacetoPay
                 return $response->processUrl;
             }else{
                 $this->errorCode = $response->status->reason;
-                $this->errorMessage = $response->status->message;
+                $this->errorMessage = 'Error: ' . $response->status->message;
             }
 
         } catch (Exception $e) {
             $this->errorCode = $e->getCode();
-            $this->errorMessage = $e->getMessage();
-            var_dump($e->getMessage());
-            die();
+            $this->errorMessage = 'Exception: ' . $e->getMessage();
         }
     }
 
