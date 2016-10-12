@@ -209,7 +209,7 @@
                 <!-- nombre del medio de pago usado en las páginas -->
                 <title>PlacetoPay - Tarjetas de crédito y débitos a cuenta</title>
                 <!-- informacion para la descripcion -->
-                <description>Pago en PlacetoPay - %s</description>
+                <description>Pago en PlacetoPay</description>
                 <!-- determina si permite o no paises especificos -->
                 <allowspecific>0</allowspecific>
                 <!-- identificador de sitio asignado por PlacetoPay -->
@@ -228,7 +228,7 @@
                 <!-- nombre del medio de pago usado en las páginas -->
                 <title>PlacetoPay - Promociones especiales</title>
                 <!-- informacion para la descripcion -->
-                <description>Pago en PlacetoPay - %s</description>
+                <description>Pago en PlacetoPay</description>
                 <!-- determina si permite o no paises especificos -->
                 <allowspecific>0</allowspecific>
                 <!-- identificador de sitio asignado por PlacetoPay -->

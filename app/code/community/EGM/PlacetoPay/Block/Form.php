@@ -80,7 +80,6 @@ class EGM_PlacetoPay_Block_Form extends Mage_Payment_Block_Form
      */
     public function hasCifin()
     {
-
         // obtiene el nombre del medio de pago
         $paymentCode = $this->getMethod()->getCode();
         // obtiene la configuracion de PlacetoPay

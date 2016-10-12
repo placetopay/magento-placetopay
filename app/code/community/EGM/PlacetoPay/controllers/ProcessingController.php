@@ -44,9 +44,14 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
     public function redirectAction()
     {
         try {
+            /**
+             * @var Mage_Checkout_Model_Session $session
+             */
             $session = $this->_getCheckout();
-
             // obtiene la orden
+            /**
+             * @var Mage_Sales_Model_Order $order
+             */
             $order = Mage::getModel('sales/order');
             $order->loadByIncrementId($session->getLastRealOrderId());
             if (!$order->getId()) {
@@ -54,7 +59,7 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
             }
 
             // obtiene la URL para redirección
-            $url = $order->getPayment()->getMethodInstance()->getCheckoutRedirect();
+            $url = $order->getPayment()->getMethodInstance()->getCheckoutRedirect($order);
             if (!$url)
                 Mage::throwException(Mage::helper('placetopay')->__('Can not generate secure data to connect with PlacetoPay.'));
 
@@ -66,7 +71,6 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
             $session->getQuote()->setIsActive(false)->save();
             $session->clear();
 
-            // redirige el flujo a Place to Pay
             Mage::app()->getResponse()->setRedirect($url);
         } catch (Exception $e) {
             Mage::logException($e);
@@ -80,10 +84,6 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
     public function responseAction()
     {
         try {
-            // verifica que los datos vengan POST
-            if (!$this->getRequest()->isPost())
-                Mage::throwException(Mage::helper('placetopay')->__('Can not process an empty response.'));
-
             // obtiene los datos de la session
             $session = $this->_getCheckout();
             $quoteId = $session->getPlacetoPayQuoteId();
@@ -101,7 +101,7 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
                     Mage::throwException(Mage::helper('placetopay')->__('Unknown payment method.'));
 
                 // procesa el pago
-                $orderId = $order->getPayment()->getMethodInstance()->processPayment($order, $this->getRequest()->getPost());
+                $orderId = $order->getPayment()->getMethodInstance()->processPayment($order, $_GET['order']);
                 $p2pInfo = $order->getPayment()->getAdditionalInformation();
 
                 // determina cual flujo seguir, si ir al flujo normal de magento a ir a visualizar la orden

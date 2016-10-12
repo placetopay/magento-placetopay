@@ -1,16 +1,6 @@
 <?php
-/*
- * PlacetoPay
- * @(#)PlacetoPay.php	3.1.1 2014/02/24
- * @author    Enrique Garcia M. <ingenieria@egm.co>
- * @copyright (c) 2004-2014 EGM Ingenieria sin fronteras S.A.S.
- * @since     Viernes, Septiembre 3, 2004
- */
 
-/**
- * Incluye las librerias para el soporte del GnuPG para la encripción de datos
- */
-require_once(dirname(__FILE__) . '/egmGnuPG.class.php');
+require_once (__DIR__ . '/Authentication.php');
 
 /**
  * Clase para la definición de excepciones
@@ -163,148 +153,6 @@ class PlacetoPay
      * @var double
      */
     private $airportTax;
-
-    /**
-     * Identificación del comercio para el pagador
-     * @access private
-     * @var string
-     */
-    private $payerID;
-
-    /**
-     * Tipo de identificación del comercio para el pagador [CC, CE, TI, PPN, NIT, COD]
-     * @access private
-     * @var string
-     */
-    private $payerIDType;
-
-    /**
-     * Nombre del completo del pagador
-     * @access private
-     * @var string
-     */
-    private $payerName;
-
-    /**
-     * Dirección de correo electrónica para notificaciones al pagador
-     * @access private
-     * @var string
-     */
-    private $payerEmail;
-
-    /**
-     * Dirección física del pagador
-     * @access private
-     * @var string
-     */
-    private $payerAddress;
-
-    /**
-     * Ciudad que aplica a la dirección física del pagador
-     * @access private
-     * @var string
-     */
-    private $payerCity;
-
-    /**
-     * Estado o provincia que aplica a la dirección física del pagador
-     * @access private
-     * @var string
-     */
-    private $payerState;
-
-    /**
-     * Código internacional del país que aplica a la dirección física del pagador acorde a ISO 3166-1
-     * @link http://www.iso.org/iso/english_country_names_and_code_elements
-     * @access private
-     * @var string
-     */
-    private $payerCountry;
-
-    /**
-     * Número telefónico del pagador
-     * @access private
-     * @var string
-     */
-    private $payerPhone;
-
-    /**
-     * Número del celular del pagador
-     * @access private
-     * @var string
-     */
-    private $payerMobile;
-
-    /**
-     * Identificación del comercio para el comprador
-     * @access private
-     * @var string
-     */
-    private $buyerID;
-
-    /**
-     * Tipo de identificación del comercio para el comprador [CC, CE, TI, PPN, NIT, COD]
-     * @access private
-     * @var string
-     */
-    private $buyerIDType;
-
-    /**
-     * Nombre del completo del comprador
-     * @access private
-     * @var string
-     */
-    private $buyerName;
-
-    /**
-     * Dirección de correo electrónica para notificaciones al comprador
-     * @access private
-     * @var string
-     */
-    private $buyerEmail;
-
-    /**
-     * Dirección física del comprador
-     * @access private
-     * @var string
-     */
-    private $buyerAddress;
-
-    /**
-     * Ciudad que aplica a la dirección física del comprador
-     * @access private
-     * @var string
-     */
-    private $buyerCity;
-
-    /**
-     * Estado o provincia que aplica a la dirección física del comprador
-     * @access private
-     * @var string
-     */
-    private $buyerState;
-
-    /**
-     * Código internacional del país que aplica a la dirección física del comprador acorde a ISO 3166-1
-     * @link http://www.iso.org/iso/english_country_names_and_code_elements
-     * @access private
-     * @var string
-     */
-    private $buyerCountry;
-
-    /**
-     * Número telefónico del comprador
-     * @access private
-     * @var string
-     */
-    private $buyerPhone;
-
-    /**
-     * Número del celular del comprador
-     * @access private
-     * @var string
-     */
-    private $buyerMobile;
 
     /**
      * Datos adicionales dados por el comercio, no usados por la plataforma
@@ -549,45 +397,22 @@ class PlacetoPay
      */
     private $receiptTA;
 
+    // TODO: DC
+    protected $login;
+    protected $tranKey;
+    protected $buyer = [];
+    protected $payer = [];
+
     function __construct()
     {
         $this->currency = 'COP';
         $this->language = 'ES';
-
-        $this->payerID = '';
-        $this->payerIDType = '';
-        $this->payerName = '';
-        $this->payerEmail = '';
-        $this->payerAddress = '';
-        $this->payerCity = '';
-        $this->payerState = '';
-        $this->payerCountry = '';
-        $this->payerPhone = '';
-        $this->payerMobile = '';
-
-        $this->buyerID = '';
-        $this->buyerIDType = '';
-        $this->buyerName = '';
-        $this->buyerEmail = '';
-        $this->buyerAddress = '';
-        $this->buyerCity = '';
-        $this->buyerState = '';
-        $this->buyerCountry = '';
-        $this->buyerPhone = '';
-        $this->buyerMobile = '';
-
-        $this->extraData = '';
-        $this->additionalData = array();
-        $this->compensation = '';
-        $this->overrideReturn = '';
-
+        $this->additionalData = [];
         $this->devolutionBaseAmount = '0';
 
         $this->serviceFeeAmount = 0;
         $this->serviceFeeTax = 0;
         $this->serviceFeeDevolutionBase = 0;
-        $this->serviceFeeCode = '';
-        $this->airlineCode = '';
         $this->airportTax = 0;
 
         $this->isRecurrent = false;
@@ -606,22 +431,34 @@ class PlacetoPay
         return 'PlacetoPay PHP Component ' . self::VERSION;
     }
 
-    /**
-     * Establece el directorio donde se encuentra el ejecutable del GnuPG
-     * @param string $file
-     */
-    function setGPGProgramPath($file)
+    public function setReference($reference)
     {
-        $this->gpgProgramPath = $file;
+        $this->reference = $reference;
+        return $this;
     }
 
-    /**
-     * Establece el directorio donde se encuentra el keyring del GnuPG.
-     * @param string $directory
-     */
-    function setGPGHomeDirectory($directory)
+    public function setLogin($login)
     {
-        $this->gpgHomeDirectory = $directory;
+        $this->login = $login;
+        return $this;
+    }
+
+    public function setTranKey($tranKey)
+    {
+        $this->tranKey = $tranKey;
+        return $this;
+    }
+
+    public function setTotalAmount($totalAmount)
+    {
+        $this->totalAmount = $totalAmount;
+        return $this;
+    }
+
+    public function setTaxAmount($taxAmount)
+    {
+        $this->taxAmount = $taxAmount;
+        return $this;
     }
 
     /**
@@ -738,17 +575,7 @@ class PlacetoPay
      */
     function getShopperName()
     {
-        return $this->payerName;
-    }
-
-    /**
-     * Establece el nombre del comprador/pagador
-     * @param string $name
-     * @deprecated
-     */
-    function setShopperName($name)
-    {
-        $this->payerName = (empty($name) ? '' : $name);
+        return isset($this->payer['name']) ? $this->payer['name'] : null;
     }
 
     /**
@@ -757,71 +584,22 @@ class PlacetoPay
      */
     function getShopperEmail()
     {
-        return $this->payerEmail;
+        return isset($this->payer['email']) ? $this->payer['email'] : null;
     }
 
-    /**
-     * Establece el correo electronico del comprador/pagador
-     * @param string $email
-     * @deprecated
-     */
-    function setShopperEmail($email)
+    function setPayerInfo($documentType, $document, $name, $surname, $email, $address = '', $city = '', $province = '', $country = '', $phone = '', $mobile = '')
     {
-        $this->payerEmail = (empty($email) ? '' : $email);
+        $this->payer = $this->parsePerson($documentType, $document, $name, $surname, $email, $address, $city, $province, $country, $phone, $mobile);
+        return $this;
     }
 
-    /**
-     * Establece los datos del pagador en una sola llamada
-     * @param string $documentType tipo de documento del pagador [CC, CE, TI, PPN, NIT, SSN, LIC, TAX]
-     * @param string $document
-     * @param string $name
-     * @param string $email
-     * @param string $address
-     * @param string $city
-     * @param string $province
-     * @param string $country código del pais acorde a ISO 3166-1
-     * @param string $phone
-     * @param string $mobile
-     *
-     * @link http://www.iso.org/iso/english_country_names_and_code_elements
-     */
-    function setPayerInfo($documentType, $document, $name, $email, $address = '', $city = '', $province = '', $country = '', $phone = '', $mobile = '')
+    function setBuyerInfo($documentType, $document, $name, $surname, $email, $address = null, $city = null, $province = null, $country = null, $phone = null, $mobile = null)
     {
-        if (!empty($documentType) && !in_array($documentType, array('CC', 'CE', 'TI', 'PPN', 'NIT', 'SSN', 'LIC', 'TAX')))
-            throw new PlacetoPayException('El tipo de documento del pagador no es soportado');
-        if (!empty($document) && (strlen($document) > 12))
-            throw new PlacetoPayException('El número de documento no puede exceder los 12 caracteres');
-        if (!empty($country) && (strlen($country) > 2))
-            throw new PlacetoPayException('El código del país no puede exceder los 2 caracteres acorde a la codificación ISO 3166-1');
-
-        $this->payerIDType = (empty($documentType) ? '' : $documentType);
-        $this->payerID = (empty($document) ? '' : trim($document));
-        $this->payerName = (empty($name) ? '' : trim($name));
-        $this->payerEmail = (empty($email) ? '' : trim($email));
-        $this->payerAddress = (empty($address) ? '' : trim($address));
-        $this->payerCity = (empty($city) ? '' : trim($city));
-        $this->payerState = (empty($province) ? '' : trim($province));
-        $this->payerCountry = (empty($country) ? '' : strtoupper(trim($country)));
-        $this->payerPhone = (empty($phone) ? '' : trim($phone));
-        $this->payerMobile = (empty($mobile) ? '' : trim($mobile));
+        $this->buyer = $this->parsePerson($documentType, $document, $name, $surname, $email, $address, $city, $province, $country, $phone, $mobile);
+        return $this;
     }
 
-    /**
-     * Establece los datos del comprador en una sola llamada
-     * @param string $documentType tipo de documento del comprador [CC, CE, TI, PPN, NIT, SSN, LIC, TAX, RC]
-     * @param string $document
-     * @param string $name
-     * @param string $email
-     * @param string $address
-     * @param string $city
-     * @param string $province
-     * @param string $country código del pais acorde a ISO 3166-1
-     * @param string $phone
-     * @param string $mobile
-     *
-     * @link http://www.iso.org/iso/english_country_names_and_code_elements
-     */
-    function setBuyerInfo($documentType, $document, $name, $email, $address = '', $city = '', $province = '', $country = '', $phone = '', $mobile = '')
+    public function parsePerson($documentType, $document, $name, $surname, $email, $address = null, $city = null, $province = null, $country = null, $phone = null, $mobile = null)
     {
         if (!empty($documentType) && !in_array($documentType, array('CC', 'CE', 'TI', 'PPN', 'NIT', 'SSN', 'LIC', 'TAX', 'RC')))
             throw new PlacetoPayException('El tipo de documento del comprador no es soportado');
@@ -830,24 +608,25 @@ class PlacetoPay
         if (!empty($country) && (strlen($country) > 2))
             throw new PlacetoPayException('El código del país no puede exceder los 2 caracteres acorde a la codificación ISO 3166-1');
 
-        $this->buyerIDType = (empty($documentType) ? '' : $documentType);
-        $this->buyerID = (empty($document) ? '' : trim($document));
-        $this->buyerName = (empty($name) ? '' : trim($name));
-        $this->buyerEmail = (empty($email) ? '' : trim($email));
-        $this->buyerAddress = (empty($address) ? '' : trim($address));
-        $this->buyerCity = (empty($city) ? '' : trim($city));
-        $this->buyerState = (empty($province) ? '' : trim($province));
-        $this->buyerCountry = (empty($country) ? '' : strtoupper(trim($country)));
-        $this->buyerPhone = (empty($phone) ? '' : trim($phone));
-        $this->buyerMobile = (empty($mobile) ? '' : trim($mobile));
+        $person = [
+            'name' => (empty($name) ? null : trim($name)),
+            'surname' => (empty($surname) ? null : trim($surname)),
+            'email' => (empty($email) ? null : trim($email)),
+            'documentType' => (empty($documentType) ? null : $documentType),
+            'document' => (empty($document) ? null : $document),
+            'mobile' => (empty($mobile) ? null : trim($mobile)),
+            'address' => [
+                'street' => (empty($address) ? null : trim($address)),
+                'city' => (empty($city) ? null : trim($city)),
+                'state' => (empty($province) ? null : trim($province)),
+                'country' => (empty($country) ? null : strtoupper(trim($country))),
+                'phone' => (empty($phone) ? null : trim($phone)),
+            ]
+        ];
+
+        return array_filter($person);
     }
 
-    /**
-     * Establece los datos addicionales para la transaccion, esta información
-     * es privada para el usuario final
-     * @param string $keyword
-     * @param string $value
-     */
     function addAdditionalData($keyword, $value)
     {
         if (empty($keyword) || (strlen($keyword) > 30))
@@ -1158,107 +937,6 @@ class PlacetoPay
     }
 
     /**
-     * Construye la petición de pago retornando la trama encriptada
-     * @access private
-     * @param string $keyID
-     * @param string $passPhrase
-     * @param string $recipientKeyID
-     * @param string $customerSiteID
-     * @param string $reference
-     * @param double $totalAmount
-     * @param double $taxAmount
-     * @param double $devolutionBase
-     * @param string $franchise
-     * @return string
-     */
-    public function getPaymentRequest(
-        $keyID, $passPhrase, $recipientKeyID,
-        $customerSiteID, $reference, $amount,
-        $tax, $devolutionBase, $franchise)
-    {
-        // define el delimitador de la trama
-        $delim = chr(1);
-
-        // da formato a las cadenas de valores: los numeros son cadenas cuyos
-        // 2 ultimos numeros son los decimales; establece algunos valores acorde a la informacion pasada
-        $this->totalAmount = number_format($amount, 2, '.', '');
-        $this->taxAmount = number_format($tax, 2, '.', '');
-        $this->devolutionBaseAmount = number_format($devolutionBase, 2, '.', '');
-        $this->reference = $reference;
-        $this->franchise = $franchise;
-
-        // la cadena a ser encriptada para el pago usando la especificacion dada
-        // en la version
-        $paymentData = self::VERSION . $delim .
-            $customerSiteID . $delim .
-            $reference . $delim .
-            $this->currency . $delim .
-            $this->totalAmount . $delim .
-            $this->taxAmount . $delim .
-            utf8_decode($this->payerName) . $delim .
-            utf8_decode($this->payerEmail) . $delim .
-            utf8_decode($this->extraData) . $delim .
-            $this->overrideReturn . $delim .
-            $this->compensation . $delim .
-            (empty($franchise) ? '' : $franchise) . $delim .
-            '' . $delim . // credit card
-            '' . $delim . // security code
-            '' . $delim . // expiration month
-            '' . $delim . // expiration year
-            '' . $delim . // periods
-            $this->devolutionBaseAmount . $delim .
-
-            ($this->isRecurrent ? '1' : '0') . $delim .
-            ($this->isRecurrent ? $this->recurrentPeriodicity : '') . $delim .
-            ($this->isRecurrent ? $this->recurrentInterval : '') . $delim .
-            ($this->isRecurrent ? $this->recurrentMaxPeriods : '') . $delim .
-            ($this->isRecurrent ? $this->recurrentDueDate : '') . $delim .
-
-            ($this->serviceFeeAmount < 1 ? '0' : number_format($this->serviceFeeAmount, 2, '.', '')) . $delim .
-            ($this->serviceFeeTax < 1 ? '0' : number_format($this->serviceFeeTax, 2, '.', '')) . $delim .
-            ($this->serviceFeeDevolutionBase < 1 ? '0' : number_format($this->serviceFeeDevolutionBase, 2, '.', '')) . $delim .
-            (empty($this->serviceFeeCode) ? '' : $this->serviceFeeCode) . $delim .
-            (empty($this->airlineCode) ? '' : $this->airlineCode) . $delim .
-            (empty($this->airportTax) ? '0' : number_format($this->airportTax, 2, '.', '')) . $delim .
-
-            (empty($this->payerIDType) ? '' : $this->payerIDType) . $delim .
-            (empty($this->payerID) ? '' : $this->payerID) . $delim .
-            (empty($this->payerAddress) ? '' : utf8_decode($this->payerAddress)) . $delim .
-            (empty($this->payerCity) ? '' : utf8_decode($this->payerCity)) . $delim .
-            (empty($this->payerState) ? '' : utf8_decode($this->payerState)) . $delim .
-            (empty($this->payerCountry) ? '' : utf8_decode($this->payerCountry)) . $delim .
-            (empty($this->payerPhone) ? '' : utf8_decode($this->payerPhone)) . $delim .
-            (empty($this->payerMobile) ? '' : utf8_decode($this->payerMobile)) . $delim .
-
-            (empty($this->buyerIDType) ? '' : $this->buyerIDType) . $delim .
-            (empty($this->buyerID) ? '' : $this->buyerID) . $delim .
-            (empty($this->buyerName) ? '' : utf8_decode($this->buyerName)) . $delim .
-            (empty($this->buyerEmail) ? '' : utf8_decode($this->buyerEmail)) . $delim .
-            (empty($this->buyerAddress) ? '' : utf8_decode($this->buyerAddress)) . $delim .
-            (empty($this->buyerCity) ? '' : utf8_decode($this->buyerCity)) . $delim .
-            (empty($this->buyerState) ? '' : utf8_decode($this->buyerState)) . $delim .
-            (empty($this->buyerCountry) ? '' : utf8_decode($this->buyerCountry)) . $delim .
-            (empty($this->buyerPhone) ? '' : utf8_decode($this->buyerPhone)) . $delim .
-            (empty($this->buyerMobile) ? '' : utf8_decode($this->buyerMobile));
-
-        // agrega los demas datos
-        if (!empty($this->additionalData)) {
-            foreach ($this->additionalData as $k => $v)
-                $paymentData .= $delim . utf8_decode($k) . $delim . utf8_decode($v);
-        }
-
-        // instancia el objeto de GnuPG
-        $gpg = new egmGnuPG($this->gpgProgramPath, $this->gpgHomeDirectory);
-        $paymentData = $gpg->Encrypt($keyID, $passPhrase, $recipientKeyID, $paymentData);
-        if (($paymentData == false) || ($paymentData == '')) {
-            $this->errorCode = 'GPG';
-            $this->errorMessage = $gpg->error;
-            $paymentData = '';
-        }
-        return $paymentData;
-    }
-
-    /**
      * Busca un valor como si el dato viniera de una entidad XML
      *
      * @param string $entity
@@ -1271,6 +949,11 @@ class PlacetoPay
         if (preg_match('/<' . $entity . '\\s.*>(.*)<\/' . $entity . '>/s', $context, $matcher))
             return $matcher[1];
         return null;
+    }
+
+    public function serviceResponseCode()
+    {
+        return ($this->serviceResponse) ? $this->serviceResponse->requestId : null;
     }
 
     /**
@@ -1294,6 +977,7 @@ class PlacetoPay
         $paymentData = $this->getPaymentRequest($keyID, $passPhrase,
             $recipientKeyID, $customerSiteID, $reference, $totalAmount,
             $taxAmount, $devolutionBaseAmount, $this->franchise);
+
         if (!empty($paymentData)) {
             $paymentData = '<input type="hidden" name="CustomerSiteID" value="' . htmlspecialchars($customerSiteID)
                 . '" /><input type="hidden" name="PaymentRequest" value="' . htmlspecialchars($paymentData)
@@ -1334,134 +1018,231 @@ class PlacetoPay
         return $paymentData;
     }
 
-    /**
-     * Retorna la URL con el posteo de la información para el pago
-     *
-     * @param string $keyID
-     * @param string $passPhrase
-     * @param string $recipientKeyID
-     * @param string $customerSiteID
-     * @param string $reference
-     * @param double $totalAmount
-     * @param double $taxAmount
-     * @param double $devolutionBaseAmount
-     * @return string
-     */
-    function getPaymentRedirect(
-        $keyID, $passPhrase, $recipientKeyID,
-        $customerSiteID, $reference, $totalAmount,
-        $taxAmount, $devolutionBaseAmount = 0)
+    public function getWSDLClient()
     {
-        $paymentData = $this->getPaymentRequest($keyID, $passPhrase,
-            $recipientKeyID, $customerSiteID, $reference, $totalAmount,
-            $taxAmount, $devolutionBaseAmount, $this->franchise);
-        if (!empty($paymentData)) {
-            $paymentData = self::PAYMENT_URL . '?CustomerSiteID=' . urlencode($customerSiteID)
-                . '&PaymentRequest=' . urlencode($paymentData)
-                . '&Language=' . urlencode($this->language);
-        }
+        $wsdl = 'http://redirection.p2p.dev/soap/redirect?wsdl';
+        $config = [
+            'authentication' => SOAP_AUTHENTICATION_BASIC,
+            'soap_version' => SOAP_1_2,
+            'exceptions' => true,
+            'cache_wsdl' => WSDL_CACHE_NONE,
+            'trace' => false,
+            'encoding' => 'UTF-8',
+            'location' => 'http://redirection.p2p.dev/soap/redirect'
+        ];
 
-        return $paymentData;
+        $client = new SoapClient($wsdl, $config);
+        $auth = new Authentication(['login' => $this->login, 'tranKey' => $this->tranKey]);
+        $client->__setSoapHeaders($auth->getSoapHeader());
+        return $client;
     }
 
     /**
-     * Determina si la respuesta a una transaccion de PlacetoPay es exitosa o no
-     * @return int
+     * Retorna la URL con el posteo de la información para el pago
+     * @return string
      */
-    function getPaymentResponse($keyID, $passPhrase, $paymentResponse)
+    function getPaymentRedirect()
     {
-        // respuesta predeterminada de la funcion
-        $ret = self::P2P_ERROR;
+        $paymentData = $this->getPaymentRequest();
 
-        // instancia el objeto de GnuPG
-        $gpg = new egmGnuPG($this->gpgProgramPath, $this->gpgHomeDirectory);
-        $paymentResponse = $gpg->Decrypt($keyID, $passPhrase, $paymentResponse);
-        if (($paymentResponse == false) || ($paymentResponse == '')) {
-            $this->errorCode = 'GPG';
-            $this->errorMessage = $gpg->error;
-        } else {
-            $delim = chr(1);
-
-            // obtiene los valores de la respuesta, los cuales vienen
-            // posicionales asi:
-            // SIEMPRE:
-            // CustomerSiteID, Reference, Currency, TotalAmount, TaxAmount,
-            // bankCurrency, bankTotalAmount, TaxAmountCNV,
-            // payerName, payerEmail, ExtraData,
-            // ErrorCode, ErrorMessage
-            // EXITOSA:
-            // Franchise, FranchiseName, Authorization, Receipt, Date,
-            // CreditCard*, BankName*
-            $data = explode($delim, $paymentResponse);
-
-            // obtiene los basicos
-            if (count($data) >= 13) {
-                $this->reference = $data[1];
-                $this->currency = $data[2];
-                $this->totalAmount = $data[3];
-                $this->taxAmount = $data[4];
-                $this->bankCurrency = $data[5];
-                $this->bankTotalAmount = $data[6];
-                if ($this->totalAmount == $this->bankTotalAmount)
-                    $this->bankConversionFactor = '1.00';
-                elseif ($this->bankTotalAmount == '' || $this->bankTotalAmount == '0.00')
-                    $this->bankConversionFactor = '0.00';
-                else
-                    $this->bankConversionFactor = number_format(floatval($this->bankTotalAmount) / floatval($this->totalAmount), 2, '.', '');
-                $this->payerName = utf8_encode($data[8]);
-                $this->payerEmail = $data[9];
-                $this->extraData = utf8_encode($data[10]);
-                $this->errorCode = $data[11];
-                $this->errorMessage = utf8_encode($data[12]);
-
-                // carga las opcionales
-                $this->franchise = (isset($data[13]) ? $data[13] : "");
-                $this->franchiseName = (isset($data[14]) ? utf8_encode($data[14]) : "");
-                $this->authorization = (isset($data[15]) ? $data[15] : "");
-                $this->receipt = (isset($data[16]) ? $data[16] : "");
-                $this->transactionDate = (isset($data[17]) ? $data[17] : "");
-                $this->creditCardNumber = (isset($data[18]) ? $data[18] : "");
-                $this->bankName = (isset($data[19]) ? utf8_encode($data[19]) : "");
-                $this->errorCodeTA = (isset($data[20]) ? $data[20] : '');
-                $this->errorMessageTA = (isset($data[21]) ? utf8_encode($data[21]) : '');
-                $this->authorizationTA = (isset($data[22]) ? $data[22] : '');
-                $this->receiptTA = (isset($data[23]) ? $data[23] : '');
-                $this->airportTax = (isset($data[24]) ? floatval($data[24]) : 0.00);
-                $this->serviceFeeAmount = (isset($data[25]) ? floatval($data[25]) : 0.00);
-                $this->internalReference = (isset($data[26]) ? $data[26] : '');
-                $this->retailCode = (isset($data[27]) ? $data[27] : '');
-                $this->terminalNumber = (isset($data[28]) ? $data[28] : '');
-                $this->accountType = (isset($data[29]) ? $data[29] : '');
-                $this->accountTypeName = (isset($data[30]) ? $data[30] : '');
-                $this->creditCardPeriod = (isset($data[31]) ? $data[31] : '');
-                $this->errorCodeB24 = (isset($data[32]) ? $data[32] : $this->errorCode);
-
-                // determina la respuesta adecuada
-                switch ($this->errorCode) {
-                    case '00':
-                        $ret = self::P2P_APPROVED;
-                        break;
-                    case '09':
-                        $ret = self::P2P_DUPLICATE;
-                        break;
-                    case '?-':
-                        $ret = self::P2P_PENDING;
-                        break;
-                    case '?5':
-                        $ret = self::P2P_ERROR;
-                        break;
-                    case '?P':
-                        $ret = self::P2P_PENDING_VALIDATE_PRECHARGE;
-                        break;
-                    default:
-                        $ret = ((substr($this->errorCode, 0, 1) == 'X') ? self::P2P_ERROR : self::P2P_DECLINED);
-                        break;
-                }
-            } else {
-                $this->errorCode = 'P2P';
-                $this->errorMessage = 'Trama invalida, se espera más información.';
+        try {
+            $client = $this->getWSDLClient();
+            $response = $client->createRequest(['payload' => $paymentData])->createRequestResult;
+            if($response->status->status == 'OK'){
+                $this->serviceResponse = $response;
+                return $response->processUrl;
+            }else{
+                $this->errorCode = $response->status->reason;
+                $this->errorMessage = $response->status->message;
             }
+
+        } catch (Exception $e) {
+            $this->errorCode = $e->getCode();
+            $this->errorMessage = $e->getMessage();
+            var_dump($e->getMessage());
+            die();
         }
+    }
+
+    /**
+     * Models the RedirectRequest as an array
+     * @return array
+     */
+    public function getPaymentRequest()
+    {
+        // TODO: DC Configuration for allowPartial
+        $redirectRequest = [
+            'locale' => 'es_CO',
+            'buyer' => $this->payer,
+            'payment' => [
+                'reference' => $this->reference,
+                'description' => utf8_decode($this->extraData),
+                'amount' => [
+                    'currency' => $this->currency,
+                    'total' => $this->totalAmount
+                ],
+                'allowPartial' => false,
+            ],
+            'expiration' => date('c', strtotime("+2 days")),
+            'ipAddress' => Mage::helper('core/http')->getRemoteAddr(),
+            'returnUrl' => $this->overrideReturn,
+            'userAgent' => Mage::helper('core/http')->getHttpUserAgent()
+        ];
+
+        return $redirectRequest;
+    }
+
+    public function response()
+    {
+        return $this->result;
+    }
+
+    public function responseCode()
+    {
+        $result = $this->result;
+        if(!$result)
+            return self::P2P_PENDING;
+
+        switch ($result->status->status) {
+            case 'APPROVED':
+                $ret = self::P2P_APPROVED;
+                break;
+            case 'PENDING':
+                $ret = self::P2P_PENDING;
+                break;
+            case 'REJECTED':
+                $ret = self::P2P_DECLINED;
+                break;
+            case 'FAILED':
+                $ret = self::P2P_ERROR;
+                break;
+        }
+
+        return $ret;
+    }
+
+    function getPaymentResponse($requestId)
+    {
+        try {
+            $client = $this->getWSDLClient();
+            $result = $client->getRequestInformation(['requestId' => $requestId])->getRequestInformationResult;
+
+            $this->result = $result;
+
+            switch ($this->result->status->status) {
+                case 'APPROVED':
+                    $ret = self::P2P_APPROVED;
+                    break;
+                case 'PENDING':
+                    $ret = self::P2P_PENDING;
+                    break;
+                case 'FAILED':
+                    $ret = self::P2P_ERROR;
+                    break;
+                case 'PENDING_VALIDATION':
+                    $ret = self::P2P_PENDING_VALIDATE_PRECHARGE;
+                    break;
+                default:
+                    $ret = ((substr($this->errorCode, 0, 1) == 'X') ? self::P2P_ERROR : self::P2P_DECLINED);
+                    break;
+            }
+
+        } catch (Exception $e) {
+            var_dump($e->getMessage());
+            die();
+        }
+//        // respuesta predeterminada de la funcion
+//        $ret = self::P2P_ERROR;
+//
+//        // instancia el objeto de GnuPG
+//        $gpg = new egmGnuPG($this->gpgProgramPath, $this->gpgHomeDirectory);
+//        $paymentResponse = $gpg->Decrypt($keyID, $passPhrase, $paymentResponse);
+//        if (($paymentResponse == false) || ($paymentResponse == '')) {
+//            $this->errorCode = 'GPG';
+//            $this->errorMessage = $gpg->error;
+//        } else {
+//            $delim = chr(1);
+//
+//            // obtiene los valores de la respuesta, los cuales vienen
+//            // posicionales asi:
+//            // SIEMPRE:
+//            // CustomerSiteID, Reference, Currency, TotalAmount, TaxAmount,
+//            // bankCurrency, bankTotalAmount, TaxAmountCNV,
+//            // payerName, payerEmail, ExtraData,
+//            // ErrorCode, ErrorMessage
+//            // EXITOSA:
+//            // Franchise, FranchiseName, Authorization, Receipt, Date,
+//            // CreditCard*, BankName*
+//            $data = explode($delim, $paymentResponse);
+//
+//            // obtiene los basicos
+//            if (count($data) >= 13) {
+//                $this->reference = $data[1];
+//                $this->currency = $data[2];
+//                $this->totalAmount = $data[3];
+//                $this->taxAmount = $data[4];
+//                $this->bankCurrency = $data[5];
+//                $this->bankTotalAmount = $data[6];
+//                if ($this->totalAmount == $this->bankTotalAmount)
+//                    $this->bankConversionFactor = '1.00';
+//                elseif ($this->bankTotalAmount == '' || $this->bankTotalAmount == '0.00')
+//                    $this->bankConversionFactor = '0.00';
+//                else
+//                    $this->bankConversionFactor = number_format(floatval($this->bankTotalAmount) / floatval($this->totalAmount), 2, '.', '');
+//                $this->payerName = utf8_encode($data[8]);
+//                $this->payerEmail = $data[9];
+//                $this->extraData = utf8_encode($data[10]);
+//                $this->errorCode = $data[11];
+//                $this->errorMessage = utf8_encode($data[12]);
+//
+//                // carga las opcionales
+//                $this->franchise = (isset($data[13]) ? $data[13] : "");
+//                $this->franchiseName = (isset($data[14]) ? utf8_encode($data[14]) : "");
+//                $this->authorization = (isset($data[15]) ? $data[15] : "");
+//                $this->receipt = (isset($data[16]) ? $data[16] : "");
+//                $this->transactionDate = (isset($data[17]) ? $data[17] : "");
+//                $this->creditCardNumber = (isset($data[18]) ? $data[18] : "");
+//                $this->bankName = (isset($data[19]) ? utf8_encode($data[19]) : "");
+//                $this->errorCodeTA = (isset($data[20]) ? $data[20] : '');
+//                $this->errorMessageTA = (isset($data[21]) ? utf8_encode($data[21]) : '');
+//                $this->authorizationTA = (isset($data[22]) ? $data[22] : '');
+//                $this->receiptTA = (isset($data[23]) ? $data[23] : '');
+//                $this->airportTax = (isset($data[24]) ? floatval($data[24]) : 0.00);
+//                $this->serviceFeeAmount = (isset($data[25]) ? floatval($data[25]) : 0.00);
+//                $this->internalReference = (isset($data[26]) ? $data[26] : '');
+//                $this->retailCode = (isset($data[27]) ? $data[27] : '');
+//                $this->terminalNumber = (isset($data[28]) ? $data[28] : '');
+//                $this->accountType = (isset($data[29]) ? $data[29] : '');
+//                $this->accountTypeName = (isset($data[30]) ? $data[30] : '');
+//                $this->creditCardPeriod = (isset($data[31]) ? $data[31] : '');
+//                $this->errorCodeB24 = (isset($data[32]) ? $data[32] : $this->errorCode);
+//
+//                // determina la respuesta adecuada
+//                switch ($this->errorCode) {
+//                    case '00':
+//                        $ret = self::P2P_APPROVED;
+//                        break;
+//                    case '09':
+//                        $ret = self::P2P_DUPLICATE;
+//                        break;
+//                    case '?-':
+//                        $ret = self::P2P_PENDING;
+//                        break;
+//                    case '?5':
+//                        $ret = self::P2P_ERROR;
+//                        break;
+//                    case '?P':
+//                        $ret = self::P2P_PENDING_VALIDATE_PRECHARGE;
+//                        break;
+//                    default:
+//                        $ret = ((substr($this->errorCode, 0, 1) == 'X') ? self::P2P_ERROR : self::P2P_DECLINED);
+//                        break;
+//                }
+//            } else {
+//                $this->errorCode = 'P2P';
+//                $this->errorMessage = 'Trama invalida, se espera más información.';
+//            }
+//        }
         return $ret;
     }
 

@@ -1,13 +1,5 @@
 <?php
-/**
- * PlacetoPay Connector for Magento
- *
- * @category   EGM
- * @package    EGM_PlacetoPay
- * @copyright  Copyright (c) 2009-2015 EGM Ingenieria sin fronteras S.A.S.
- * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- * @version    $Id: Abstract.php,v 1.0.13 2016-01-22 16:34:00-05 egarcia Exp $
- */
+
 
 /**
  * Procesa las peticiones de PlacetoPay, generando las tramas e interpretandolas
@@ -221,14 +213,11 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     }
 
     /**
-     * Obtiene el objeto de PlacetoPay instanciado para la remisi�n
-     * de par�metros
-     *
-     * @return array (PlacetoPay, array)
+     * Loads up the information on a single object PlacetoPay
+     * @return PlacetoPay
      */
     public function getPlacetoPayObj()
     {
-        // determina los datos a enviar la plataforma
         $billing = $this->getOrder()->getBillingAddress();
         $shipping = $this->getOrder()->getShippingAddress();
         $totalAmount = Mage::app()->getStore()->roundPrice($this->getOrder()->getTotalDue());
@@ -237,6 +226,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
             $baseDevAmount = 0;
         else
             $baseDevAmount = Mage::app()->getStore()->roundPrice($totalAmount - $taxAmount - $this->getOrder()->getShippingAmount());
+
         $currencyCode = $this->getOrder()->getOrderCurrencyCode();
         $extraData = array();
         foreach ($this->getOrder()->getAllVisibleItems() as $item) {
@@ -245,54 +235,70 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
         $extraData = implode(', ', $extraData);
         if (strlen($extraData) > 252) $extraData = substr($extraData, 0, 252) . '...';
 
-        // obtiene los datos base de configuracion del GPG
-        $gpgConf = Mage::getStoreConfig('placetopay/gpg');
+        $document = $this->getOrder()->getDocument();
+        $documentType = $this->parseDocumentType($this->getOrder()->getData('document_type'));
 
-        // instancia el componente
         $p2p = new PlacetoPay();
-        $p2p->setGPGProgramPath($gpgConf['gpgpath']);
-        $p2p->setGPGHomeDirectory($gpgConf['gpghomedir']);
-        $p2p->setOverrideReturn(Mage::getUrl('placetopay/processing/response', array('_secure' => true)));
         $p2p->setCurrency($currencyCode);
-        $p2p->setLanguage(strtoupper($this->getLocale()));
-        $p2p->setPayerInfo('', '', $billing->getFirstname() . ' ' . $billing->getLastname(),
+        $p2p->setTotalAmount($totalAmount);
+        $p2p->setTaxAmount($taxAmount);
+        $p2p->setLanguage($this->getLocale());
+        $p2p->setPayerInfo($documentType, $document, $billing->getFirstname(), $billing->getLastname(),
             $this->getOrder()->getCustomerEmail(),
             $billing->getStreetFull(), $billing->getCity(),
             $billing->getRegion(), $billing->getCountryId(), $billing->getTelephone(), '');
         if ($shipping)
-            $p2p->setBuyerInfo('', '', $shipping->getFirstname() . ' ' . $shipping->getLastname(),
+            $p2p->setBuyerInfo('', '', $shipping->getFirstname(), $shipping->getLastname(),
                 '',
                 $shipping->getStreetFull(), $shipping->getCity(),
                 $shipping->getRegion(), $shipping->getCountryId(), $shipping->getTelephone(), '');
-        $p2p->setExtraData($extraData);
+        $p2p->setExtraData($this->getConfigData('description'));
         $p2p->addAdditionalData('ecommerce', 'Magento ' . Mage::getVersion());
+        $p2p->addAdditionalData('extra', $extraData);
+        $p2p->setReference($this->getCheckout()->getLastRealOrderId());
+        $p2p->setOverrideReturn(Mage::getUrl('placetopay/processing/response') . '?order=' . $p2p->getReference());
 
-        // argumentos para el m�todo de llamada
-        $args = array(
-            $gpgConf['keyid'],
-            $gpgConf['passphrase'],
-            $gpgConf['recipientkeyid'],
-            $this->getConfigData('customersiteid'),
-            $this->getCheckout()->getLastRealOrderId(),
-            sprintf('%.2f', $totalAmount), sprintf('%.2f', $taxAmount), sprintf('%.2f', $baseDevAmount)
-        );
+        // Login y tranKey
+        $p2p->setLogin($this->getConfigData('login'));
+        $p2p->setTranKey($this->getConfigData('trankey'));
 
-        return array($p2p, $args);
+        return $p2p;
+    }
+
+    public function parseDocumentType($documentType)
+    {
+        $documentTypes = [
+            '1' => 'CC',
+            '2' => 'CE',
+            '3' => 'NIT',
+            '4' => 'TI',
+            '5' => 'PPN',
+            '6' => null,
+            '7' => 'SSN',
+            '8' => 'LIC',
+            '9' => 'TAX',
+        ];
+        return isset($documentTypes[$documentType]) ? $documentTypes[$documentType] : null;
     }
 
     /**
      * Obtiene la URL de redirecci�n
-     *
+     * @param  Mage_Sales_Model_Order $order
      * @return string
      */
-    public function getCheckoutRedirect()
+    public function getCheckoutRedirect($order)
     {
-        list($p2p, $args) = $this->getPlacetoPayObj();
-        $url = $p2p->getPaymentRedirect($args[0], $args[1], $args[2], $args[3], $args[4], $args[5], $args[6], $args[7]);
+        /**
+         * @var PlacetoPay $p2p
+         */
+        $p2p = $this->getPlacetoPayObj();
+        $url = $p2p->getPaymentRedirect();
         if (empty($url)) {
             error_log($p2p->getErrorCode() . ' - ' . $p2p->getErrorMessage());
+        }else {
+            // TODO: DC Please learn where to put this
+            $order->setBaseDiscountCanceled($p2p->serviceResponseCode())->save();
         }
-
         return $url;
     }
 
@@ -327,14 +333,12 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     /**
      * Asienta el pago
      * @param Mage_Sales_Model_Order $order
-     * @param int $rc
      * @param PlacetoPay $p2p
      */
-    public function settlePlacetoPayPayment(Mage_Sales_Model_Order $order, $rc, PlacetoPay $p2p)
+    public function settlePlacetoPayPayment(Mage_Sales_Model_Order $order, PlacetoPay $p2p)
     {
-        // modifique la orden acorde a la respuesta de PlacetoPay
         $wasCancelled = false;
-        switch ($rc) {
+        switch ($p2p->responseCode()) {
             case PlacetoPay::P2P_ERROR:
                 if ($order->getStatus() != Mage_Sales_Model_Order::STATE_CANCELED) {
                     $comment = Mage::helper('placetopay')->__('Transaction Failed');
@@ -371,48 +375,44 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                 break;
         }
 
-        // determina si realiza la actualizaci�n de la orden
+        // determina si realiza la actualizacion de la orden
         if (!empty($comment)) {
             // asocia los valores retornados al medio de pago para los metodos de captura y cancelacion
             $this->p2pStatus = $status;
-            $wasPaymentInformationChanged = $this->_importPaymentInformation($order->getPayment(), $p2p, $status);
+            $wasPaymentInformationChanged = $this->_importPaymentInformation($order, $p2p, $status);
 
             // si el estado es procesado, remite el email
             if ($state == Mage_Sales_Model_Order::STATE_PROCESSING) {
                 // almacena el n�mero de autorizacion
                 $order->getPayment()->setLastTransId($p2p->getAuthorization());
-                $order->getPayment()->setStatus(Mage_Payment_Model_Method_Abstract::STATUS_APPROVED);
                 $order->setState($state, $status, $comment)
                     ->save();
+
+                if($wasCancelled)
+                {
+                    /**
+                     * Set the product ID
+                     */
+                    $EntityId = $order->getEntityId();
+
+                    // Un-cancel the specified order and the items related
+                    $order = Mage::getModel('sales/order')->load($EntityId);
+                    $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING);
+                    $order->setStatus(Mage_Payment_Model_Method_Abstract::STATUS_APPROVED);
+                    $order->save();
+
+                    foreach ($order->getAllItems() as $item) {
+                        $item->setQtyCanceled(0);
+                        $item->save();
+                    }
+                }
+
                 // agrega la factura
                 $this->_createInvoice($order);
                 // envia el correo con la orden
                 $order->sendNewOrderEmail()
                     ->setEmailSent(true)
                     ->save();
-
-                if ($wasCancelled) {
-                    // fetch write database connection that is used in Mage_Core module
-                    $write = Mage::getSingleton('core/resource')->getConnection('core_write');
-
-                    /**
-                     * Set the product ID
-                     */
-                    $EntityId = $order->getEntityId();
-
-                    $query = "UPDATE `sales_flat_order_grid` SET `status` = 'processing' 
-							WHERE `sales_flat_order_grid`.`entity_id` = '" . (int)$EntityId . "';
-							UPDATE `sales_flat_order` SET `status` = 'APPROVED', `state` = 'processing' 
-							WHERE `sales_flat_order`.`entity_id` = '" . (int)$EntityId . "';
-							INSERT INTO `sales_flat_order_status_history` 
-							(`parent_id`, `is_customer_notified`, `is_visible_on_front`, `comment`, `status`, `created_at`, `entity_name`) 
-							VALUES ('" . (int)$EntityId . "', '2', '0', 'Transaction Approved', '" . Mage_Sales_Model_Order::STATE_PROCESSING . "', '" . date('Y-m-d H:i:s') . "', 'order');";
-
-                    /**
-                     * Execute the query
-                     */
-                    $write->query($query);
-                }
 
                 $wasPaymentInformationChanged = true;
             } elseif ($state == Mage_Sales_Model_Order::STATE_CANCELED) {
@@ -433,44 +433,31 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
             if ($wasPaymentInformationChanged)
                 $order->getPayment()->save();
         }
+
+//        var_dump($state);
+//        var_dump($status);
+//        var_dump($comment);
+//        var_dump($wasCancelled);
+//        var_dump($wasPaymentInformationChanged);
+//        die();
     }
 
     /**
-     * Procesa la respuesta de PlacetoPay
-     * Thorws Mage_Core_Exception if error
+     * TODO: DC
      * @param Mage_Sales_Model_Order $order
-     * @param array $post
-     * @return mixed false en caso de error, el numero de la orden en otro caso
+     * @param $reference
+     * @return mixed
      */
-    public function processPayment($order, $post)
+    public function processPayment($order, $reference)
     {
-        // verifica que se obtengan los datos requeridos por PlacetoPay
-        if (empty($post['CustomerSiteID']) || empty($post['PaymentResponse']))
-            Mage::throwException(Mage::helper('placetopay')->__('Request does not contain the required PlacetoPay elements.'));
-
-        // verifica que el identificador de sitio corresponda al de la tienda
-        if ($post['CustomerSiteID'] != $this->getConfigData('customersiteid'))
-            Mage::throwException(Mage::helper('placetopay')->__('The CustomerSiteID does not correspond to the store setting.'));
-
-        // obtiene los datos base de configuracion del GPG
-        $gpgConf = Mage::getStoreConfig('placetopay/gpg');
-
-        // procesa la respuesta con el componente
         $p2p = new PlacetoPay();
-        $p2p->setGPGProgramPath($gpgConf['gpgpath']);
-        $p2p->setGPGHomeDirectory($gpgConf['gpghomedir']);
-        $rc = $p2p->getPaymentResponse($gpgConf['keyid'], $gpgConf['passphrase'], $post['PaymentResponse']);
+        // Login y tranKey
+        $p2p->setLogin($this->getConfigData('login'));
+        $p2p->setTranKey($this->getConfigData('trankey'));
 
-        // informe si hay un error asociado al GnuPG
-        if (($rc == PlacetoPay::P2P_ERROR) && ($p2p->getErrorCode() == 'GPG'))
-            Mage::throwException($p2p->getErrorCode() . ' - ' . $p2p->getErrorMessage());
-
-        // valida que la referencia corresponda a la orden
-        if ($p2p->getReference() != $order->getRealOrderId())
-            Mage::throwException(Mage::helper('placetopay')->__('Invalid order ID.'));
-
+        $p2p->getPaymentResponse((int) $order->getBaseDiscountCanceled());
         // procesa el asiento de la orden acorde al resultado dado por PlacetoPay
-        $this->settlePlacetoPayPayment($order, $rc, $p2p);
+        $this->settlePlacetoPayPayment($order, $p2p);
 
         return $order->getEntityId();
     }
@@ -479,41 +466,22 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
      * Asocia la informaci�n del pago retornada por PlacetoPay al objeto de pago
      * Retorna true si hubo cambios en la informaci�n
      *
-     * @param Mage_Payment_Model_Info $payment
+     * @param Mage_Sales_Model_Order $order
      * @param PlacetoPay $p2p
      * @param string $status
      * @return bool
      */
-    protected function _importPaymentInformation(Mage_Payment_Model_Info $payment, PlacetoPay $p2p, $status)
+    protected function _importPaymentInformation(Mage_Sales_Model_Order $order, PlacetoPay $p2p, $status)
     {
+        $payment = $order->getPayment();
         $was = $payment->getAdditionalInformation();
         $from = array(
             EGM_PlacetoPay_Model_Info::RESPONSE_STATUS => $status,
-            EGM_PlacetoPay_Model_Info::TRANSACTION_DATE => $p2p->getTransactionDate(),
-            EGM_PlacetoPay_Model_Info::RESPONSE_CODE => $p2p->getErrorCode(),
-            EGM_PlacetoPay_Model_Info::RESPONSE_MESSAGE => html_entity_decode($p2p->getErrorMessage()),
-            EGM_PlacetoPay_Model_Info::REFERENCE => $p2p->getReference()
+            EGM_PlacetoPay_Model_Info::TRANSACTION_DATE => $p2p->response()->status->date,
+            EGM_PlacetoPay_Model_Info::RESPONSE_CODE => $p2p->response()->status->reason,
+            EGM_PlacetoPay_Model_Info::RESPONSE_MESSAGE => html_entity_decode($p2p->response()->status->message),
+            EGM_PlacetoPay_Model_Info::REFERENCE => $p2p->response()->payment->reference
         );
-        if ($p2p->getFranchise()) {
-            $from[EGM_PlacetoPay_Model_Info::FRANCHISE] = $p2p->getFranchise();
-            $from[EGM_PlacetoPay_Model_Info::FRANCHISE_NAME] = html_entity_decode($p2p->getFranchiseName());
-        }
-        if ($p2p->getBankName())
-            $from[EGM_PlacetoPay_Model_Info::BANK_NAME] = $p2p->getBankName();
-        if ($p2p->getCreditCardNumber())
-            $from[EGM_PlacetoPay_Model_Info::CREDIT_CARD] = $p2p->getCreditCardNumber();
-        if ($p2p->getAuthorization())
-            $from[EGM_PlacetoPay_Model_Info::AUTH_CODE] = $p2p->getAuthorization();
-        if ($p2p->getReceipt())
-            $from[EGM_PlacetoPay_Model_Info::RECEIPT] = $p2p->getReceipt();
-        if ($p2p->getShopperName())
-            $from[EGM_PlacetoPay_Model_Info::PAYER_NAME] = $p2p->getShopperName();
-        if ($p2p->getShopperEmail())
-            $from[EGM_PlacetoPay_Model_Info::PAYER_EMAIL] = $p2p->getShopperEmail();
-        if (!empty($_SERVER['REMOTE_ADDR']))
-            $from[EGM_PlacetoPay_Model_Info::IP_ADDRESS] = $_SERVER['REMOTE_ADDR'];
-        if ($p2p->getPlatformConversionFactor() <> 1)
-            $from[EGM_PlacetoPay_Model_Info::CONVERSION_RATE] = Mage::getModel('directory/currency')->load($p2p->getPlatformCurrency())->format($p2p->getPlatformConversionFactor(), array(), false, false);
 
         Mage::getSingleton('placetopay/info')->importToPayment($from, $payment);
         return $was != $payment->getAdditionalInformation();

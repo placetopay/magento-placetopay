@@ -35,6 +35,7 @@ class EGM_PlacetoPay_Model_System_Config_Source_Logos
             array('value' => 'PINVL', 'label' => 'Pinválida'),
             array('value' => 'Efecty', 'label' => 'Efecty'),
             array('value' => 'CASH', 'label' => 'Pago en efectivo'),
+            array('value' => 'VISAC', 'label' => 'Visa Checkout'),
         );
         return $options;
     }
