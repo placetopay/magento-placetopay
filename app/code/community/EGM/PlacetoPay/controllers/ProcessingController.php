@@ -120,9 +120,8 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
                     }
                 }
 
-            } else {
-                Mage::throwException(Mage::helper('placetopay')->__('order_not_in_session'));
             }
+            return $this->_redirect('sales/order/history/');
         } catch (Mage_Core_Exception $e) {
             $this->_getCheckout()->addError($e->getMessage());
         } catch (Exception $e) {

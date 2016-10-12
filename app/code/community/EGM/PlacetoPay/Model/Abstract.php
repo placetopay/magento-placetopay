@@ -414,6 +414,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     /**
      * @param Status $status
      * @param Mage_Sales_Model_Order $order
+     * @param Mage_Sales_Model_Order_Payment $payment
      */
     public function settleOrderStatus(Status $status, &$order, $payment = null)
     {
@@ -438,8 +439,12 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
         }
 
         if ($state !== null) {
+
             if (!$payment)
                 $payment = $order->getPayment();
+
+            $info = $this->getInfoModel();
+            $info->updateStatus($payment, $status);
 
             if ($status->isApproved()) {
                 $this->_createInvoice($order);
