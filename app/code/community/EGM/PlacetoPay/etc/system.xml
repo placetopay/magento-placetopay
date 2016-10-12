@@ -199,7 +199,8 @@
                         <display_logo translate="label comment">
                             <label>Display logo</label>
                             <config_path>payment/placetopay_promotion/display_logo</config_path>
-                            <comment>Choose the logos to be displayed under the PlacetoPay logo in payment method selection
+                            <comment>Choose the logos to be displayed under the PlacetoPay logo in payment method
+                                selection
                             </comment>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>EGM_PlacetoPay_Model_System_Config_Source_Logos</source_model>

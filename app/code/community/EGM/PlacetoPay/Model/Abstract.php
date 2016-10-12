@@ -176,7 +176,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     public function parseOrderState($order)
     {
         $status = null;
-        switch ($order->getStatus()){
+        switch ($order->getStatus()) {
             case Mage_Sales_Model_Order::STATE_PROCESSING:
                 $status = Status::ST_APPROVED;
                 break;
@@ -190,7 +190,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                 $status = Status::ST_PENDING;
         }
         return new Status([
-            'status' => $status
+            'status' => $status,
         ]);
     }
 

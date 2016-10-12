@@ -19,7 +19,7 @@ class EGM_PlacetoPay_Model_Info
             'status' => $response->status()->status(),
             'status_reason' => $response->status()->reason(),
             'status_message' => $response->status()->message(),
-            'status_date' => $response->status()->date()
+            'status_date' => $response->status()->date(),
         ]);
         $payment->save();
     }
@@ -34,7 +34,7 @@ class EGM_PlacetoPay_Model_Info
             'status' => $status->status(),
             'status_reason' => $status->reason(),
             'status_message' => $status->message(),
-            'status_date' => $status->date()
+            'status_date' => $status->date(),
         ]);
     }
 

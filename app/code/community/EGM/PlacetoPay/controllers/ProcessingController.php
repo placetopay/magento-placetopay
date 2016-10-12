@@ -137,7 +137,7 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
     public function notifyAction()
     {
         $data = json_decode(file_get_contents('php://input'), true);
-        if ($data && isset($data['reference'])){
+        if ($data && isset($data['reference'])) {
             /**
              * @var Mage_Sales_Model_Order $order
              */
@@ -153,9 +153,9 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
             $p2p = $order->getPayment()->getMethodInstance();
             $notification = $p2p->gateway()->readNotification($data);
 
-            if ($notification->isValidNotification()){
+            if ($notification->isValidNotification()) {
                 $p2p->settleOrderStatus($notification->status(), $order);
-            }else{
+            } else {
                 Mage::log('Invalid notification: ' . serialize($data));
             }
         }

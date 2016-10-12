@@ -34,7 +34,7 @@
  */
 class EGM_PlacetoPay_Sales_Block_Order_Info extends Mage_Core_Block_Template
 {
-    protected $_links = array();
+    protected $_links = [];
 
     protected function _construct()
     {
@@ -70,11 +70,11 @@ class EGM_PlacetoPay_Sales_Block_Order_Info extends Mage_Core_Block_Template
 
     public function addLink($name, $path, $label)
     {
-        $this->_links[$name] = new Varien_Object(array(
+        $this->_links[$name] = new Varien_Object([
             'name' => $name,
             'label' => $label,
-            'url' => empty($path) ? '' : Mage::getUrl($path, array('order_id' => $this->getOrder()->getId()))
-        ));
+            'url' => empty($path) ? '' : Mage::getUrl($path, ['order_id' => $this->getOrder()->getId()]),
+        ]);
         return $this;
     }
 
@@ -108,9 +108,9 @@ class EGM_PlacetoPay_Sales_Block_Order_Info extends Mage_Core_Block_Template
     public function getReorderUrl($order)
     {
         if (!Mage::getSingleton('customer/session')->isLoggedIn()) {
-            return $this->getUrl('sales/guest/reorder', array('order_id' => $order->getId()));
+            return $this->getUrl('sales/guest/reorder', ['order_id' => $order->getId()]);
         }
-        return $this->getUrl('sales/order/reorder', array('order_id' => $order->getId()));
+        return $this->getUrl('sales/order/reorder', ['order_id' => $order->getId()]);
     }
 
     /**
@@ -123,8 +123,8 @@ class EGM_PlacetoPay_Sales_Block_Order_Info extends Mage_Core_Block_Template
     public function getPrintUrl($order)
     {
         if (!Mage::getSingleton('customer/session')->isLoggedIn()) {
-            return $this->getUrl('sales/guest/print', array('order_id' => $order->getId()));
+            return $this->getUrl('sales/guest/print', ['order_id' => $order->getId()]);
         }
-        return $this->getUrl('sales/order/print', array('order_id' => $order->getId()));
+        return $this->getUrl('sales/order/print', ['order_id' => $order->getId()]);
     }
 }

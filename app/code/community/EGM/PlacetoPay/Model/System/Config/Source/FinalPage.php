@@ -22,10 +22,10 @@ class EGM_PlacetoPay_Model_System_Config_Source_FinalPage
     public function toOptionArray()
     {
         // define la página de llegada al finalizar el pago
-        $options = array(
-            array('value' => 'order_info', 'label' => Mage::helper('placetopay')->__('Order information')),
-            array('value' => 'magento_default', 'label' => Mage::helper('placetopay')->__('Magento default')),
-        );
+        $options = [
+            ['value' => 'order_info', 'label' => Mage::helper('placetopay')->__('Order information')],
+            ['value' => 'magento_default', 'label' => Mage::helper('placetopay')->__('Magento default')],
+        ];
         return $options;
     }
 }

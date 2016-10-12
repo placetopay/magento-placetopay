@@ -30,14 +30,14 @@ class EGM_PlacetoPay_Model_Observer
             //->addAttributeToFilter('updated_at', array('lt' => date('Y-m-d H:i:s', Mage::getModel('core/date')->timestamp(time() - 15 * 60))))
             ->addAttributeToSelect('increment_id')
             //->addAttributeToFilter('created_at', array('gt' => date('Y-m-d H:i:s', time() - 5 * 24 * 60 * 60))) // 5 días
-            ->addAttributeToFilter('created_at', array('lt' => date('Y-m-d H:i:s', time() - 7 * 60)))// 7 min
-            ->addAttributeToFilter('updated_at', array('lt' => date('Y-m-d H:i:s', time() - 7 * 60)))// 7 minutos
-            ->addAttributeToFilter('state', array('in' => array(
-                Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage_Sales_Model_Order::STATE_NEW
-            )))
-            ->addAttributeToFilter('status', array('in' => array(
-                'pending', 'pending_payment', 'pending_placetopay', Mage_Payment_Model_Method_Abstract::STATUS_UNKNOWN
-            )))
+            ->addAttributeToFilter('created_at', ['lt' => date('Y-m-d H:i:s', time() - 7 * 60)])// 7 min
+            ->addAttributeToFilter('updated_at', ['lt' => date('Y-m-d H:i:s', time() - 7 * 60)])// 7 minutos
+            ->addAttributeToFilter('state', ['in' => [
+                Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage_Sales_Model_Order::STATE_NEW,
+            ]])
+            ->addAttributeToFilter('status', ['in' => [
+                'pending', 'pending_payment', 'pending_placetopay', Mage_Payment_Model_Method_Abstract::STATUS_UNKNOWN,
+            ]])
             ->addAttributeToSort('created_at')
             ->load()
             ->getItems();

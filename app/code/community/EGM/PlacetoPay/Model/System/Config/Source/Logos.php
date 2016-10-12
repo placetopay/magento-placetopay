@@ -22,21 +22,21 @@ class EGM_PlacetoPay_Model_System_Config_Source_Logos
     public function toOptionArray()
     {
         // define las franquicias soportadas por el medio de pago
-        $options = array(
-            array('value' => 'CR_VS', 'label' => 'VISA'),
-            array('value' => 'RM_MC', 'label' => 'MASTERCARD'),
-            array('value' => 'CR_AM', 'label' => 'AMEX'),
-            array('value' => 'CR_DN', 'label' => 'DINERS'),
-            array('value' => 'TY_EX', 'label' => 'Tarjeta Éxito'),
-            array('value' => 'TY_AK', 'label' => 'Tarjeta Alkosto'),
-            array('value' => 'V_VBV', 'label' => 'Verified by VISA'),
-            array('value' => '_PSE_', 'label' => 'PSE'),
-            array('value' => 'SFPAY', 'label' => 'SafetyPay'),
-            array('value' => 'PINVL', 'label' => 'Pinválida'),
-            array('value' => 'Efecty', 'label' => 'Efecty'),
-            array('value' => 'CASH', 'label' => 'Pago en efectivo'),
-            array('value' => 'VISAC', 'label' => 'Visa Checkout'),
-        );
+        $options = [
+            ['value' => 'CR_VS', 'label' => 'VISA'],
+            ['value' => 'RM_MC', 'label' => 'MASTERCARD'],
+            ['value' => 'CR_AM', 'label' => 'AMEX'],
+            ['value' => 'CR_DN', 'label' => 'DINERS'],
+            ['value' => 'TY_EX', 'label' => 'Tarjeta Éxito'],
+            ['value' => 'TY_AK', 'label' => 'Tarjeta Alkosto'],
+            ['value' => 'V_VBV', 'label' => 'Verified by VISA'],
+            ['value' => '_PSE_', 'label' => 'PSE'],
+            ['value' => 'SFPAY', 'label' => 'SafetyPay'],
+            ['value' => 'PINVL', 'label' => 'Pinválida'],
+            ['value' => 'Efecty', 'label' => 'Efecty'],
+            ['value' => 'CASH', 'label' => 'Pago en efectivo'],
+            ['value' => 'VISAC', 'label' => 'Visa Checkout'],
+        ];
         return $options;
     }
 }

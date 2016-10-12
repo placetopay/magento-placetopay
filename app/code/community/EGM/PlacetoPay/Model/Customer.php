@@ -18,7 +18,7 @@ class EGM_PlacetoPay_Model_Customer extends Mage_Customer_Model_Customer
      */
     public function validate()
     {
-        $errors = array();
+        $errors = [];
         if (!Zend_Validate::is(trim($this->getFirstname()), 'NotEmpty')) {
             $errors[] = Mage::helper('customer')->__('The first name cannot be empty.');
         }
@@ -43,7 +43,7 @@ class EGM_PlacetoPay_Model_Customer extends Mage_Customer_Model_Customer
         if (!$this->getId() && !Zend_Validate::is($password, 'NotEmpty')) {
             $errors[] = Mage::helper('customer')->__('The password cannot be empty.');
         }
-        if (strlen($password) && !Zend_Validate::is($password, 'StringLength', array(6))) {
+        if (strlen($password) && !Zend_Validate::is($password, 'StringLength', [6])) {
             $errors[] = Mage::helper('customer')->__('The minimum password length is %s', 6);
         }
         $confirmation = $this->getPasswordConfirmation();
