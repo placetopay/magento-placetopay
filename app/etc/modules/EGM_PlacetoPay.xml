@@ -10,18 +10,18 @@
  */
 -->
 <config>
-	<modules>
-	<!-- declare CompanyName_NewModule module -->
-		<EGM_PlacetoPay>
-	<!-- this is an active module -->
-			<active>true</active>
-	<!-- this module will be located in app/code/community code pool -->
-			<codePool>community</codePool>
-	<!-- specify dependencies for correct module loading order -->
-			<depends>
-				<Mage_Sales />
-				<Mage_Payment />
-			</depends>
-		</EGM_PlacetoPay>
-	</modules>
+    <modules>
+        <!-- declare CompanyName_NewModule module -->
+        <EGM_PlacetoPay>
+            <!-- this is an active module -->
+            <active>true</active>
+            <!-- this module will be located in app/code/community code pool -->
+            <codePool>community</codePool>
+            <!-- specify dependencies for correct module loading order -->
+            <depends>
+                <Mage_Sales/>
+                <Mage_Payment/>
+            </depends>
+        </EGM_PlacetoPay>
+    </modules>
 </config>

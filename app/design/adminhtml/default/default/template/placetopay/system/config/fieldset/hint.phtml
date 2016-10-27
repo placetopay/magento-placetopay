@@ -1,20 +1,13 @@
 <?php
 /**
- * PlacetoPay Connector for Magento
- *
- * @category   design
- * @package    default_default
- * @copyright  Copyright (c) 2011 EGM Ingenieria sin fronteras S.A.S.
- * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- * @version    $Id: Hint.phtml,v 1.0.1 2011-05-31 18:33:00-05 ingenieria Exp $
- */
-?>
-<?php
-/**
  * @see EGM_PlacetoPay_Block_Adminhtml_System_Config_Fieldset_Hint
  */
 ?>
 <div class="placetopay-payment-notice">
-	<h4><img src="https://www.placetopay.com/images/providers/placetopay_xh48.png" height="48" alt="PlacetoPay" /><br/><?php echo Mage::helper('placetopay')->__('Looking for Place to Pay&reg;? We have our own tab to the left under Sales.')?></h4>
-	<p><a href="<?php echo $this->escapeHtml($this->getUrl('adminhtml/system_config/edit', array('section' => 'placetopay'))) ?>"><?php echo Mage::helper('placetopay')->__('View Place to Pay&reg; config tab.')?></a></p>
+    <h4><img src="https://www.placetopay.com/images/providers/placetopay_xh48.png" height="48"
+             alt="PlacetoPay"/><br/><?php echo Mage::helper('placetopay')->__('Looking for Place to Pay&reg;? We have our own tab to the left under Sales.') ?>
+    </h4>
+    <p>
+        <a href="<?php echo $this->escapeHtml($this->getUrl('adminhtml/system_config/edit', ['section' => 'placetopay'])) ?>"><?php echo Mage::helper('placetopay')->__('View Place to Pay&reg; config tab.') ?></a>
+    </p>
 </div>

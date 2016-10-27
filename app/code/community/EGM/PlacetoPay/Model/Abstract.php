@@ -20,7 +20,7 @@ require_once(__DIR__ . '/../bootstrap.php');
 abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_Abstract
 {
     const VERSION = '2.0.0';
-    const WS_URL = 'https://api.placetopay.com/redirection/soap/redirect';
+    const WS_URL = 'https://test.placetopay.com/redirection/';
 
     /**
      * unique internal payment method identifier
@@ -201,17 +201,16 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     {
         if (!$this->gateway) {
             $envs = [
-                'production' => 'https://api.placetopay.com/redirection/soap/redirect',
-                'testing' => 'https://test.placetopay.com/redirection/soap/redirect',
-                'development' => 'http://redirection.dnetix.co/soap/redirect',
+                'production' => 'https://secure.placetopay.com/redirection/',
+                'testing' => 'https://test.placetopay.com/redirection/',
+                'development' => 'http://redirection.dnetix.co/',
             ];
             $url = isset($envs[self::getModuleConfig('environment')]) ? $envs[self::getModuleConfig('environment')] : self::WS_URL;
 
             $this->gateway = new PlacetoPay([
-                'wsdl' => $url . '?wsdl',
                 'login' => $this->getConfig('login'),
                 'tranKey' => $this->getConfig('trankey'),
-                'location' => $url,
+                'url' => $url,
             ]);
         }
         return $this->gateway;
@@ -229,7 +228,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     }
 
     /**
-     * @param  Mage_Sales_Model_Order $order
+     * @param Mage_Sales_Model_Order $order
      * @return string
      */
     public function getCheckoutRedirect($order)
@@ -358,19 +357,24 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
      */
     public function parseAddressPerson($address)
     {
-        return new Person([
-            'name' => $address->getFirstname(),
-            'surname' => $address->getLastname(),
-            'email' => $address->getEmail(),
-            'address' => [
-                'country' => $address->getCountryId(),
-                'state' => $address->getRegion(),
-                'city' => $address->getCity(),
-                'street' => implode(' ', $address->getStreet()),
-                'phone' => $address->getTelephone(),
-                'postalCode' => $address->getPostcode(),
-            ],
-        ]);
+        // When there is no person it comes as boolean
+        if ($address) {
+            return new Person([
+                'name' => $address->getFirstname(),
+                'surname' => $address->getLastname(),
+                'email' => $address->getEmail(),
+                'address' => [
+                    'country' => $address->getCountryId(),
+                    'state' => $address->getRegion(),
+                    'city' => $address->getCity(),
+                    'street' => implode(' ', $address->getStreet()),
+                    'phone' => $address->getTelephone(),
+                    'postalCode' => $address->getPostcode(),
+                ],
+            ]);
+        }
+
+        return null;
     }
 
     /**

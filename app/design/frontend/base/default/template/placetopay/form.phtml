@@ -30,7 +30,7 @@ $_code = $this->getMethodCode()
                         (isset($this->lastAuthorization) ? $this->lastAuthorization : 'N/A')); ?>
                 <?php else : ?>
                     <?php echo sprintf($this->__('You have orders in process with payment transaction pending from get a bank response.<br/>We recommend you to review the section %s, to verify that a double payment not be charged.<br/>If you wish more information about the current status of your payment process please contact us in our support phone %s or send your questions to the email %s.'),
-                        '<a href="' . $this->getUrl('customer/account', array('_secure' => true)) . '">' . $this->__("My account / My orders") . '</a>',
+                        '<a href="' . $this->getUrl('customer/account', ['_secure' => true]) . '">' . $this->__("My account / My orders") . '</a>',
                         Mage::getStoreConfig('general/store_information/phone'),
                         '<a href="mailto:' . Mage::getStoreConfig('trans_email/ident_sales/email') . '">' . Mage::getStoreConfig('trans_email/ident_sales/email') . '</a>'); ?>
                 <?php endif; ?>

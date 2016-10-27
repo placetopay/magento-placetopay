@@ -10,30 +10,32 @@
  */
 -->
 <layout version="0.1.0">
-	<default>	
-    	<reference name="head">
-        	<action method="addJs"><script>placetopay.js</script></action>
-    	</reference>
-	</default>
-	<sales_order_view>
-    	<reference name="sales.order.info">
-    		<action method="setTemplate">
-    	    	<template>placetopay/sales/order/info.phtml</template>
-        	</action>
-   	 	</reference>
-	</sales_order_view>
-	<sales_guest_view>
-    	<reference name="sales.order.info">
-    		<action method="setTemplate">
-    	    	<template>placetopay/sales/order/info.phtml</template>
-        	</action>
-   	 	</reference>
-	</sales_guest_view>
-	<sales_order_history>
-    	<reference name="sales.order.history">
-    		<action method="setTemplate">
-    	    	<template>placetopay/sales/order/history.phtml</template>
-        	</action>
-   	 	</reference>
-	</sales_order_history>
+    <default>
+        <reference name="head">
+            <action method="addJs">
+                <script>placetopay.js</script>
+            </action>
+        </reference>
+    </default>
+    <sales_order_view>
+        <reference name="sales.order.info">
+            <action method="setTemplate">
+                <template>placetopay/sales/order/info.phtml</template>
+            </action>
+        </reference>
+    </sales_order_view>
+    <sales_guest_view>
+        <reference name="sales.order.info">
+            <action method="setTemplate">
+                <template>placetopay/sales/order/info.phtml</template>
+            </action>
+        </reference>
+    </sales_guest_view>
+    <sales_order_history>
+        <reference name="sales.order.history">
+            <action method="setTemplate">
+                <template>placetopay/sales/order/history.phtml</template>
+            </action>
+        </reference>
+    </sales_order_history>
 </layout>
