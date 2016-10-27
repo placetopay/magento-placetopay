@@ -6,6 +6,7 @@ namespace Dnetix\Redirection\Entities;
 
 use Dnetix\Redirection\Contracts\Entity;
 use Dnetix\Redirection\Traits\LoaderTrait;
+use Dnetix\Redirection\Validators\RecurringValidator;
 
 class Recurring extends Entity
 {
@@ -79,7 +80,7 @@ class Recurring extends Entity
             'nextPayment' => $this->nextPayment(),
             'maxPeriods' => $this->maxPeriods(),
             'dueDate' => $this->dueDate(),
-            'notificationUrl' => $this->notificationUrl()
+            'notificationUrl' => $this->notificationUrl(),
         ]);
     }
 
