@@ -108,6 +108,15 @@
                 </EGM_PlacetoPay>
             </modules>
         </translate>
+        <layout>
+            <sales_order_view>
+                <reference name="sales.order.info">
+                    <action method="setTemplate">
+                        <template>placetopay/sales/order/info.phtml</template>
+                    </action>
+                </reference>
+            </sales_order_view>
+        </layout>
     </adminhtml>
 
     <crontab>

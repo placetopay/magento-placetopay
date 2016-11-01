@@ -72,16 +72,16 @@ class EGM_PlacetoPay_Block_Form extends Mage_Payment_Block_Form
         return ($this->countPendingOrders > 0);
     }
 
-//    /**
-//     * Retorna la variable de configuración
-//     * @return boolean
-//     */
-//    public function hasCifin()
-//    {
-//        // obtiene el nombre del medio de pago
-//        $paymentCode = $this->getMethod()->getCode();
-//        // obtiene la configuracion de PlacetoPay
-//        $fields = Mage::getStoreConfig('payment/' . $paymentCode);
-//        return $fields['hascifin'];
-//    }
+    /**
+     * Retorna la variable de configuración
+     * @return boolean
+     */
+    public function hasCifin()
+    {
+        // obtiene el nombre del medio de pago
+        $paymentCode = $this->getMethod()->getCode();
+        // obtiene la configuracion de PlacetoPay
+        $fields = Mage::getStoreConfig('payment/' . $paymentCode);
+        return $fields['hascifin'];
+    }
 }

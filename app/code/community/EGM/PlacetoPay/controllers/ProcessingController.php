@@ -158,6 +158,8 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
             } else {
                 Mage::log('Invalid notification: ' . serialize($data));
             }
+        } else {
+            Mage::log('Wrong or empty notification data: ' . serialize($data));
         }
     }
 }

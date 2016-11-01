@@ -20,6 +20,7 @@ class EGM_PlacetoPay_Model_Info
             'status_reason' => $response->status()->reason(),
             'status_message' => $response->status()->message(),
             'status_date' => $response->status()->date(),
+            'environment' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('environment')
         ]);
         $payment->save();
     }

@@ -12,15 +12,20 @@ class EGM_PlacetoPay_Block_Info extends Mage_Payment_Block_Info
     protected function _prepareSpecificInformation($transport = null)
     {
         $transport = parent::_prepareSpecificInformation($transport);
+        $payment = $this->getInfo();
+        $data = $payment->getAdditionalInformation();
         /**
-         * @var EGM_PlacetoPay_Model_Abstract $payment
+         * @var EGM_PlacetoPay_Model_Abstract $p2p
          */
-        $payment = $this->getInfo()->getMethodInstance();
+        $p2p = $payment->getMethodInstance();
 
-        return $transport->addData([
-            $payment::trans('merchantname') => $payment::getModuleConfig('merchantname'),
-            $payment::trans('merchantdocument') => $payment::getModuleConfig('merchantdocument'),
-            $payment::trans('description') => $payment->getConfig('description'),
-        ]);
+        return $transport->addData(array_filter([
+            $p2p::trans('merchantname') => $p2p::getModuleConfig('merchantname'),
+            $p2p::trans('merchantdocument') => $p2p::getModuleConfig('merchantdocument'),
+            $p2p::trans('request_id') => isset($data['request_id']) ? $data['request_id'] : null,
+            $p2p::trans('request_date') => isset($data['status_date']) ? $data['status_date'] : null,
+            $p2p::trans('request_status') => isset($data['status']) ? $p2p::trans($data['status']) : null,
+            $p2p::trans('request_view') => isset($data['process_url']) ? $data['process_url'] : null,
+        ]));
     }
 }
