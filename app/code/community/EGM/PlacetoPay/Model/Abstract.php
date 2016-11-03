@@ -258,16 +258,15 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     {
         $reference = $checkout->getLastRealOrderId();
         $total = $order->getTotalDue();
-        $discount = $order->getDiscountAmount();
+        $subtotal = $order->getSubtotal();
+        $discount = $order->getDiscountAmount() ? $order->getDiscountAmount() * -1 : 0;
         $taxAmount = $order->getTaxAmount();
         $shipping = $order->getShippingAmount();
 
         if (!$taxAmount || (int)$taxAmount === 0)
             $devolutionBase = 0;
         else
-            $devolutionBase = $total - $taxAmount - $shipping;
-
-        $subtotal = $total - $taxAmount - $shipping - $discount;
+            $devolutionBase = $subtotal - $discount;
 
         /**
          * @var Mage_Sales_Model_Order_Item[] $visibleItems
@@ -296,6 +295,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                         [
                             'kind' => 'valueAddedTax',
                             'amount' => $taxAmount,
+                            'base' => $devolutionBase,
                         ],
                     ],
                     'details' => [
@@ -310,10 +310,6 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                         [
                             'kind' => 'shipping',
                             'amount' => $shipping,
-                        ],
-                        [
-                            'kind' => 'vatDevolutionBase',
-                            'amount' => $devolutionBase,
                         ],
                     ],
                     'currency' => $order->getOrderCurrencyCode(),
