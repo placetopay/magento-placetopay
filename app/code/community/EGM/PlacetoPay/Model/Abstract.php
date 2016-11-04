@@ -259,7 +259,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
         $reference = $checkout->getLastRealOrderId();
         $total = $order->getTotalDue();
         $subtotal = $order->getSubtotal();
-        $discount = $order->getDiscountAmount() ? $order->getDiscountAmount() * -1 : 0;
+        $discount = (int) $order->getDiscountAmount() != 0 ? ($order->getDiscountAmount() * -1) : 0;
         $taxAmount = $order->getTaxAmount();
         $shipping = $order->getShippingAmount();
 
