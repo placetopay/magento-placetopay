@@ -12,7 +12,7 @@ class EGM_PlacetoPay_Model_Observer
 {
     public function resolvePendingTransactions()
     {
-        Mage::log('Resolving PlacetoPay pending orders');
+        self::output('Resolving PlacetoPay pending orders');
 
         /**
          * @var Mage_Sales_Model_Order[] $collection
@@ -31,19 +31,33 @@ class EGM_PlacetoPay_Model_Observer
             ->load()
             ->getItems();
 
-        if (sizeof($collection))
+
+        if (sizeof($collection)) {
             foreach ($collection as $order) {
                 $order = $order->loadByIncrementId($order->getIncrementId());
                 $payment = $order->getPayment();
                 $p2p = $payment->getMethodInstance();
 
                 if ($p2p instanceof EGM_PlacetoPay_Model_Abstract) {
-                    $response = $p2p->resolve($order, $payment);
-                    Mage::log('Resolving ' . $order->getId() . ' [' . $response->status()->status() . '] ' . $response->status()->message());
+                    try {
+                        $response = $p2p->resolve($order, $payment);
+                        self::output('Resolving ' . $order->getId() . ' [' . $response->status()->status() . '] ' . $response->status()->message());
+                    } catch (Exception $e) {
+                        self::output('Error resolving ' . $payment->getId() . ' -- ' . $e->getMessage());
+                    }
                 }
 
                 unset($p2p);
                 unset($payment);
             }
+        } else {
+            self::output("There is no pending orders to resolve");
+        }
+    }
+
+    public static function output($message)
+    {
+        Mage::log($message);
+        print_r($message . "\n");
     }
 }

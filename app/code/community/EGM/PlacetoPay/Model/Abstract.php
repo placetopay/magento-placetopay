@@ -416,7 +416,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
         $info = $payment->getAdditionalInformation();
 
         if (!$info || !isset($info['request_id']))
-            Mage::throwException('No additional information for this order:' . $order->getRealOrderId());
+            Mage::throwException('No additional information for order: ' . $order->getRealOrderId());
 
         $response = $this->gateway()->query($info['request_id']);
 
