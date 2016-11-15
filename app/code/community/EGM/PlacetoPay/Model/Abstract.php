@@ -230,23 +230,31 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     /**
      * @param Mage_Sales_Model_Order $order
      * @return string
+     * @throws Exception
      */
     public function getCheckoutRedirect($order)
     {
         $this->_order = $order;
-        $response = $this->getPaymentRedirect($order, $this->getCheckout());
 
-        if ($response->isSuccessful()) {
-            $payment = $order->getPayment();
-            $info = $this->getInfoModel();
+        try {
+            $response = $this->getPaymentRedirect($order, $this->getCheckout());
 
-            $info->loadInformationFromRedirectResponse($payment, $response);
-        } else {
-            Mage::log($response->status()->reason() . '-' . $response->status()->message());
-            Mage::throwException(Mage::helper('placetopay')->__($response->status()->message()));
+            if ($response->isSuccessful()) {
+                $payment = $order->getPayment();
+                $info = $this->getInfoModel();
+
+                $info->loadInformationFromRedirectResponse($payment, $response);
+            } else {
+                Mage::log($response->status()->reason() . '-' . $response->status()->message());
+                Mage::throwException(Mage::helper('placetopay')->__($response->status()->message()));
+            }
+
+            return $response->processUrl();
+        } catch (Exception $e) {
+            Mage::log($e->getMessage());
+            throw $e;
         }
 
-        return $response->processUrl();
     }
 
     /**
@@ -257,7 +265,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     public function getRedirectRequestFromOrder($order, $checkout)
     {
         $reference = $checkout->getLastRealOrderId();
-        $total = $order->getTotalDue();
+        $total = self::getModuleConfig('grandtotal') ? $order->getGrandTotal() : $order->getTotalDue();
         $subtotal = $order->getSubtotal();
         $discount = (int) $order->getDiscountAmount() != 0 ? ($order->getDiscountAmount() * -1) : 0;
         $taxAmount = $order->getTaxAmount();
