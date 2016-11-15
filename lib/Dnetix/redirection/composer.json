@@ -1,5 +1,6 @@
 {
   "name": "dnetix/redirection",
+  "version": "0.2.2",
   "description": "Library to connect with PlacetoPay Redirection service",
   "type": "library",
   "license": "MIT",
@@ -9,7 +10,10 @@
       "email": "dnetix@gmail.com"
     }
   ],
-  "require": {},
+  "require": {
+    "php": ">=5.4",
+    "ext-soap": "*"
+  },
   "require-dev": {
     "phpunit/phpunit": "^5.4"
   },
