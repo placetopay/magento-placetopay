@@ -245,13 +245,13 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
 
                 $info->loadInformationFromRedirectResponse($payment, $response);
             } else {
-                Mage::log('P2P_LOG: ' . $response->status()->reason() . '-' . $response->status()->message());
+                Mage::log('P2P_LOG: [' . $order->getRealOrderId() . ']' . $response->status()->message());
                 Mage::throwException(Mage::helper('placetopay')->__($response->status()->message()));
             }
 
             return $response->processUrl();
         } catch (Exception $e) {
-            Mage::log('P2P_LOG: ' . $e->getMessage());
+            Mage::log('P2P_LOG: [' . $order->getRealOrderId() . ']' . $e->getMessage());
             throw $e;
         }
 
