@@ -95,7 +95,7 @@
                             <comment>It is recommended to set this value per store views.</comment>
                             <config_path>payment/placetopay_standard/title</config_path>
                             <frontend_type>text</frontend_type>
-                            <sort_order>5</sort_order>
+                            <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -105,7 +105,7 @@
                             <config_path>payment/placetopay_standard/active</config_path>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>10</sort_order>
+                            <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -115,11 +115,22 @@
                             <comment>It is recommended to set this value per store views.</comment>
                             <config_path>payment/placetopay_standard/description</config_path>
                             <frontend_type>text</frontend_type>
-                            <sort_order>25</sort_order>
+                            <sort_order>3</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </description>
+                        <hascifin translate="label source_model">
+                            <label>Enable CIFIN Message</label>
+                            <config_path>payment/placetopay_standard/hascifin</config_path>
+                            <comment>Select yes to display the warning message at payment.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </hascifin>
                         <display_logo translate="label comment">
                             <label>Display logo</label>
                             <config_path>payment/placetopay_standard/display_logo</config_path>
@@ -128,28 +139,17 @@
                             </comment>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>EGM_PlacetoPay_Model_System_Config_Source_Logos</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>5</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </display_logo>
-                        <hascifin translate="label source_model">
-                            <label>Enable CIFIN Message</label>
-                            <config_path>payment/placetopay_standard/hascifin</config_path>
-                            <comment>Select yes to display the warning message at payment.</comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>01</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </hascifin>
                         <final_page translate="label source_model">
                             <label>Final page</label>
                             <config_path>payment/placetopay_standard/final_page</config_path>
                             <frontend_type>select</frontend_type>
                             <source_model>EGM_PlacetoPay_Model_System_Config_Source_FinalPage</source_model>
-                            <sort_order>35</sort_order>
+                            <sort_order>6</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -170,7 +170,7 @@
                             <comment>It is recommended to set this value per store views.</comment>
                             <config_path>payment/placetopay_promotion/title</config_path>
                             <frontend_type>text</frontend_type>
-                            <sort_order>5</sort_order>
+                            <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -180,32 +180,32 @@
                             <config_path>payment/placetopay_promotion/active</config_path>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>10</sort_order>
+                            <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </active>
+                        <description translate="label comment">
+                            <label>Payment description</label>
+                            <comment>It is recommended to set this value per store views.</comment>
+                            <config_path>payment/placetopay_promotion/description</config_path>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </description>
                         <hascifin translate="label source_model">
                             <label>Enable CIFIN Message</label>
                             <config_path>payment/placetopay_promotion/hascifin</config_path>
                             <comment>Select yes to display the warning message at payment.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>01</sort_order>
+                            <sort_order>4</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </hascifin>
-                        <description translate="label comment">
-                            <label>Payment description</label>
-                            <comment>It is recommended to set this value per store views.</comment>
-                            <config_path>payment/placetopay_promotion/description</config_path>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>25</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </description>
                         <display_logo translate="label comment">
                             <label>Display logo</label>
                             <config_path>payment/placetopay_promotion/display_logo</config_path>
@@ -214,7 +214,7 @@
                             </comment>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>EGM_PlacetoPay_Model_System_Config_Source_Logos</source_model>
-                            <sort_order>30</sort_order>
+                            <sort_order>5</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -224,7 +224,7 @@
                             <config_path>payment/placetopay_promotion/final_page</config_path>
                             <frontend_type>select</frontend_type>
                             <source_model>EGM_PlacetoPay_Model_System_Config_Source_FinalPage</source_model>
-                            <sort_order>35</sort_order>
+                            <sort_order>6</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -237,7 +237,7 @@
                             </comment>
                             <frontend_type>multiselect</frontend_type>
                             <source_model>EGM_PlacetoPay_Model_System_Config_Source_Hours</source_model>
-                            <sort_order>40</sort_order>
+                            <sort_order>7</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

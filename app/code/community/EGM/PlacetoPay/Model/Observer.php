@@ -57,7 +57,7 @@ class EGM_PlacetoPay_Model_Observer
 
     public static function output($message)
     {
-        Mage::log($message);
+        Mage::log('P2P_LOG: ' . $message);
         print_r($message . "\n");
     }
 }

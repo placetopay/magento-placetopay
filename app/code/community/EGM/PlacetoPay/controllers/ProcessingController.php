@@ -54,7 +54,7 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
 
             return $this->_redirectUrl($url);
         } catch (Exception $e) {
-            Mage::log($e->getMessage());
+            Mage::log('P2P_LOG: ' . $e->getMessage());
             $session->addError($e->getMessage());
             return $this->_redirectError('checkout/cart');
         }
@@ -125,7 +125,7 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
         } catch (Mage_Core_Exception $e) {
             $this->_getCheckout()->addError($e->getMessage());
         } catch (Exception $e) {
-            Mage::log($e->getMessage());
+            Mage::log('P2P_LOG: ' . $e->getMessage());
         }
 
         return $this->_redirect('checkout/cart');
@@ -143,7 +143,7 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
              */
             $order = Mage::getModel('sales/order')->loadByIncrementId($data['reference']);
             if (!$order->getId()) {
-                Mage::log('Non existent order: ' . serialize($data));
+                Mage::log('P2P_LOG: ' . 'Non existent order: ' . serialize($data));
                 Mage::throwException(Mage::helper('placetopay')->__('Order not found.'));
             }
 
@@ -156,10 +156,10 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
             if ($notification->isValidNotification()) {
                 $p2p->settleOrderStatus($notification->status(), $order);
             } else {
-                Mage::log('Invalid notification: ' . serialize($data));
+                Mage::log('P2P_LOG: ' . 'Invalid notification: ' . serialize($data));
             }
         } else {
-            Mage::log('Wrong or empty notification data: ' . serialize($data));
+            Mage::log('P2P_LOG: ' . 'Wrong or empty notification data: ' . serialize($data));
         }
     }
 }

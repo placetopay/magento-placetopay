@@ -36,6 +36,7 @@ class EGM_PlacetoPay_Model_System_Config_Source_Logos
             ['value' => 'Efecty', 'label' => 'Efecty'],
             ['value' => 'CASH', 'label' => 'Pago en efectivo'],
             ['value' => 'VISAC', 'label' => 'Visa Checkout'],
+            ['value' => 'MSTRP', 'label' => 'Masterpass'],
         ];
         return $options;
     }

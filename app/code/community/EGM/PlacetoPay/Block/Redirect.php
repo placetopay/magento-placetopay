@@ -21,8 +21,6 @@ class EGM_PlacetoPay_Block_Redirect extends Mage_Core_Block_Abstract
 {
     protected function _toHtml()
     {
-        var_dump("FROM " . get_class($this) . ' CALLED');
-        die();
         // obtiene la sesion del checkout
         $objPlacetoPay = Mage::getSingleton('checkout/session')->getQuote();
         $mi = $objPlacetoPay->getPayment()->getMethodInstance();
