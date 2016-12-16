@@ -8,12 +8,12 @@ $_code = $this->getMethodCode()
         <img src="https://www.placetopay.com/images/providers/placetopay_xh48.png" border="0" alt="PlacetoPay"/><br/>
         <?php echo $this->__('You will be redirected to the PlacetoPay secure payment page when you place an order.') ?>
         <br/>
-        <p class="notice">
+        <p class="notice" style="margin-top: 15px;">
             <?php
             $p2p_logo = $this->getMethod()->getConfigData('display_logo');
             if ($p2p_logo) {
                 foreach (explode(',', $p2p_logo) as $franchise) {
-                    echo '<img src="https://www.placetopay.com/images/providers/' . $franchise . '.gif" border="0" alt="" style="display:inline-block" />&nbsp;';
+                    echo '<img src="https://www.placetopay.com/images/providers/' . $franchise . '.png" alt="" class="acceptance_logo" style="max-width: 80px; max-height: 50px; display: inline-block; padding: 0 5px;" />';
                 }
             }
             ?>
@@ -47,7 +47,6 @@ $_code = $this->getMethodCode()
                 <br/></p>
             </p>
         <?php endif ?>
-
     </li>
 </ul>
 
