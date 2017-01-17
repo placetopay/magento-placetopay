@@ -245,13 +245,13 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
 
                 $info->loadInformationFromRedirectResponse($payment, $response);
             } else {
-                Mage::log('P2P_LOG: [' . $order->getRealOrderId() . ']' . $response->status()->message());
+                Mage::log('P2P_LOG: CheckoutRedirect/Failure [' . $order->getRealOrderId() . '] ' . $response->status()->message());
                 Mage::throwException(Mage::helper('placetopay')->__($response->status()->message()));
             }
 
             return $response->processUrl();
         } catch (Exception $e) {
-            Mage::log('P2P_LOG: [' . $order->getRealOrderId() . ']' . $e->getMessage());
+            Mage::log('P2P_LOG: CheckoutRedirect/Exception [' . $order->getRealOrderId() . '] ' . $e->getMessage() . ' -- ' . get_class($e));
             throw $e;
         }
 
@@ -419,8 +419,10 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
 
         $info = $payment->getAdditionalInformation();
 
-        if (!$info || !isset($info['request_id']))
+        if (!$info || !isset($info['request_id'])) {
+            Mage::log('P2P_LOG: Abstract/Resolve No additional information for order: ' . $order->getRealOrderId());
             Mage::throwException('No additional information for order: ' . $order->getRealOrderId());
+        }
 
         $response = $this->gateway()->query($info['request_id']);
 

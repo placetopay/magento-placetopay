@@ -12,8 +12,6 @@ class EGM_PlacetoPay_Model_Observer
 {
     public function resolvePendingTransactions()
     {
-        self::output('Resolving PlacetoPay pending orders');
-
         /**
          * @var Mage_Sales_Model_Order[] $collection
          */
@@ -31,6 +29,7 @@ class EGM_PlacetoPay_Model_Observer
             ->load()
             ->getItems();
 
+        self::output('Resolving pending transactions ' . sizeof($collection));
 
         if (sizeof($collection)) {
             foreach ($collection as $order) {
@@ -57,7 +56,7 @@ class EGM_PlacetoPay_Model_Observer
 
     public static function output($message)
     {
-        Mage::log('P2P_LOG: ' . $message);
+        Mage::log('P2P_LOG: Resolver ' . $message);
         print_r($message . "\n");
     }
 }

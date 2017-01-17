@@ -123,7 +123,7 @@
         <jobs>
             <placetopay_resolve_transactions>
                 <schedule>
-                    <cron_expr>*/12 * * * *</cron_expr>
+                    <cron_expr>0 */6 * * *</cron_expr>
                 </schedule>
                 <run>
                     <model>placetopay/observer::resolvePendingTransactions</model>
