@@ -245,7 +245,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
 
                 $info->loadInformationFromRedirectResponse($payment, $response);
             } else {
-                Mage::log('P2P_LOG: CheckoutRedirect/Failure [' . $order->getRealOrderId() . '] ' . $response->status()->message());
+                Mage::log('P2P_LOG: CheckoutRedirect/Failure [' . $order->getRealOrderId() . '] ' . $response->status()->message() . ' - ' . $response->status()->reason() . ' ' . $response->status()->status());
                 Mage::throwException(Mage::helper('placetopay')->__($response->status()->message()));
             }
 
