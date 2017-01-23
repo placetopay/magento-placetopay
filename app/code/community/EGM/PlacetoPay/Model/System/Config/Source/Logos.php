@@ -21,20 +21,20 @@ class EGM_PlacetoPay_Model_System_Config_Source_Logos
 {
     public function toOptionArray()
     {
-        // define las franquicias soportadas por el medio de pago
+        // Define las franquicias soportadas por el medio de pago
         $options = [
-            ['value' => 'CR_VS', 'label' => 'VISA'],
-            ['value' => 'RM_MC', 'label' => 'MASTERCARD'],
-            ['value' => 'CR_AM', 'label' => 'AMEX'],
-            ['value' => 'CR_DN', 'label' => 'DINERS'],
+            ['value' => 'CR_VS', 'label' => 'Visa'],
+            ['value' => 'RM_MC', 'label' => 'Mastercard'],
+            ['value' => 'CR_AM', 'label' => 'American Express'],
+            ['value' => 'CR_DN', 'label' => 'Diners'],
+            ['value' => 'CR_CR', 'label' => 'Credencial'],
+            ['value' => '_PSE_', 'label' => 'PSE'],
+            ['value' => 'CASH', 'label' => 'Pago en efectivo'],
             ['value' => 'TY_EX', 'label' => 'Tarjeta Éxito'],
             ['value' => 'TY_AK', 'label' => 'Tarjeta Alkosto'],
-            ['value' => 'V_VBV', 'label' => 'Verified by VISA'],
-            ['value' => '_PSE_', 'label' => 'PSE'],
+            ['value' => 'V_VBV', 'label' => 'Verified by Visa'],
             ['value' => 'SFPAY', 'label' => 'SafetyPay'],
-            ['value' => 'PINVL', 'label' => 'Pinválida'],
             ['value' => 'Efecty', 'label' => 'Efecty'],
-            ['value' => 'CASH', 'label' => 'Pago en efectivo'],
             ['value' => 'VISAC', 'label' => 'Visa Checkout'],
             ['value' => 'MSTRP', 'label' => 'Masterpass'],
         ];
