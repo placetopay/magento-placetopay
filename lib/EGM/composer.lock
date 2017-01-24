@@ -1,0 +1,102 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "1d30accd6823714a7b43bf434cffd589",
+    "content-hash": "346ce6e56c446dff37995e9c8d9c6adf",
+    "packages": [
+        {
+            "name": "dnetix/redirection",
+            "version": "0.2.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dnetix/redirection.git",
+                "reference": "6fdeed0f623b2b7a0f2556e46ea15fbfa16f9555"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dnetix/redirection/zipball/6fdeed0f623b2b7a0f2556e46ea15fbfa16f9555",
+                "reference": "6fdeed0f623b2b7a0f2556e46ea15fbfa16f9555",
+                "shasum": ""
+            },
+            "require": {
+                "ext-soap": "*",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dnetix\\Redirection\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Diego Calle",
+                    "email": "dnetix@gmail.com"
+                }
+            ],
+            "description": "Library to connect with PlacetoPay Redirection service",
+            "time": "2017-01-18 15:57:56"
+        },
+        {
+            "name": "dnetix/utils",
+            "version": "0.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dnetix/utils.git",
+                "reference": "11ae7ecaf151ff45b6a8a5bfd593506dd02834ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dnetix/utils/zipball/11ae7ecaf151ff45b6a8a5bfd593506dd02834ad",
+                "reference": "11ae7ecaf151ff45b6a8a5bfd593506dd02834ad",
+                "shasum": ""
+            },
+            "require-dev": {
+                "facebook/php-sdk-v4": "5.1.*",
+                "phpunit/phpunit": "^5.3"
+            },
+            "suggest": {
+                "facebook/php-sdk-v4": "To use the Social Facebook Handler"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dnetix\\": "src/Dnetix/"
+                },
+                "classmap": [
+                    "tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Diego Calle",
+                    "email": "dnetix@gmail.com"
+                }
+            ],
+            "description": "A different set of utilities to make easier working in PHP",
+            "time": "2016-06-10 13:26:30"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

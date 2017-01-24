@@ -26,23 +26,5 @@ class EGM_PlacetoPay_Block_Redirect extends Mage_Core_Block_Abstract
         $mi = $objPlacetoPay->getPayment()->getMethodInstance();
         Mage::app()->getResponse()->setRedirect($mi->getCheckoutRedirect());
         return '';
-        /*
-                $form = new Varien_Data_Form();
-                $form->setAction($objPlacetoPay->getPlacetoPayUrl())
-                    ->setId($objPlacetoPay->getCode() . '_checkout')
-                    ->setName($objPlacetoPay->getCode() . '_checkout')
-                    ->setMethod('POST')
-                    ->setUseContainer(true);
-                foreach ($objPlacetoPay->getCheckoutFormFields() as $field => $value) {
-                    $form->addField($field, 'hidden', array('name' => $field, 'value' => $value));
-                }
-                $html = '<html><body>';
-                $html.= $this->__('You will be redirected to PlacetoPay secure site in a few seconds.');
-                $html.= $form->toHtml();
-                $html.= '<script type="text/javascript">document.getElementById("' . $objPlacetoPay->getCode() . '_checkout").submit();</script>';
-                $html.= '</body></html>';
-
-                return $html;
-        */
     }
 }

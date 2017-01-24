@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../bootstrap.php');
  */
 abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_Abstract
 {
-    const VERSION = '2.0.0';
+    const VERSION = '2.1.0.0';
     const WS_URL = 'https://test.placetopay.com/redirection/';
 
     /**
@@ -203,7 +203,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                 'testing' => 'https://test.placetopay.com/redirection/',
                 'development' => 'http://redirection.dnetix.co/',
             ];
-            $url = isset($envs[self::getModuleConfig('environment')]) ? $envs[self::getModuleConfig('environment')] : self::WS_URL;
+            $url = $envs[$this->getConfig('environment')];
 
             $this->gateway = new PlacetoPay([
                 'login' => $this->getConfig('login'),

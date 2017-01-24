@@ -32,11 +32,12 @@ class EGM_PlacetoPay_Model_Promotion extends EGM_PlacetoPay_Model_Abstract
      */
     public function isAvailable($quote = null)
     {
-        $promoHours = $this->getConfigData('promo_hours');
-        if (parent::isAvailable($quote) && !empty($promoHours)) {
-            $now = Mage::getModel('core/date')->timestamp(time());
-            if (in_array(date('H', $now), explode(',', $promoHours)))
-                return true;
+        $dateRange = $this->getConfig('daterange');
+        if (!$this->getConfig('login'))
+            return false;
+
+        if (parent::isAvailable($quote) && !empty($dateRange)) {
+            return \Dnetix\Dates\DateRangeChecker::load($dateRange)->check();
         }
         return false;
     }

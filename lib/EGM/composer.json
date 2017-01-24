@@ -1,0 +1,16 @@
+{
+    "name": "egm/redirection",
+    "description": "Libraries used by the PlacetoPay Redirection plugin",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Diego Calle",
+            "email": "dnetix@gmail.com"
+        }
+    ],
+    "require": {
+        "dnetix/redirection": "^0.2.7",
+        "dnetix/utils": "^0.4.1"
+    }
+}

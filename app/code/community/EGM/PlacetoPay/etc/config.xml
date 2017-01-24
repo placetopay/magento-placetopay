@@ -137,7 +137,6 @@
             <merchantname></merchantname>
             <merchantdocument></merchantdocument>
             <expiration>120</expiration>
-            <environment>testing</environment>
             <mobilemap>fax</mobilemap>
             <cachewsdl>0</cachewsdl>
         </placetopay>
@@ -149,6 +148,7 @@
                 <title>PlacetoPay - Tarjetas de crédito y débitos a cuenta</title>
                 <description>Pago en PlacetoPay</description>
                 <allowspecific>0</allowspecific>
+                <environment>testing</environment>
                 <display_logo>CR_VS,RM_MC,CR_AM,CR_DN,_PSE_</display_logo>
                 <final_page>order_info</final_page>
                 <group>placetopay</group>
@@ -159,8 +159,9 @@
                 <title>PlacetoPay - Promociones especiales</title>
                 <description>Pago en PlacetoPay</description>
                 <allowspecific>0</allowspecific>
+                <environment>testing</environment>
                 <display_logo>CR_AM</display_logo>
-                <promo_hours>12,13,21,22</promo_hours>
+                <daterange>A</daterange>
                 <final_page>order_info</final_page>
                 <group>placetopay</group>
             </placetopay_promotion>
