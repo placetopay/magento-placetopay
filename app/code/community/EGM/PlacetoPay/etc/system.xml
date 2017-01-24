@@ -260,11 +260,52 @@
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <config_path>placetopay/grandtotal</config_path>
-                            <sort_order>5</sort_order>
+                            <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </totaldue>
+                        <cachewsdl translate="label">
+                            <label>WSDL Cache type</label>
+                            <comment>Set the WSDL cache to use on PHP</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>EGM_PlacetoPay_Model_System_Config_Source_WSDLCache</source_model>
+                            <config_path>placetopay/cache_wsdl</config_path>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cachewsdl>
+                        <expiration translate="label">
+                            <label>Expiration time</label>
+                            <comment>Minutes that the payment will be available</comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>placetopay/expiration</config_path>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </expiration>
+                        <addressmap translate="label">
+                            <label>Address Map</label>
+                            <comment>Maps fields on the database with the required ones (city:region|address:postcode)</comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>placetopay/addressmap</config_path>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </addressmap>
+                        <mobilemap translate="label">
+                            <label>Mobile Map</label>
+                            <comment>By default Magento comes with no cell number field, so type the one to map to this field</comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>placetopay/mobilemap</config_path>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </mobilemap>
                     </fields>
                 </advanced>
             </groups>

@@ -1,8 +1,6 @@
 <?php
 
-use Dnetix\Redirection\Entities\Person;
 use Dnetix\Redirection\Entities\Status;
-use Dnetix\Redirection\Message\RedirectRequest;
 use Dnetix\Redirection\Message\RedirectResponse;
 use Dnetix\Redirection\PlacetoPay;
 use Dnetix\Redirection\Validators\Currency;
@@ -211,6 +209,9 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                 'login' => $this->getConfig('login'),
                 'tranKey' => $this->getConfig('trankey'),
                 'url' => $url,
+                'soap' => [
+                    'cache_wsdl' => self::getModuleConfig('cache_wsdl'),
+                ],
             ]);
         }
         return $this->gateway;
@@ -218,13 +219,12 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
 
     /**
      * @param Mage_Sales_Model_Order $order
-     * @param Mage_Checkout_Model_Session $checkout
      * @return RedirectResponse
      */
-    public function getPaymentRedirect($order, $checkout)
+    public function getPaymentRedirect($order)
     {
-        $request = $this->getRedirectRequestFromOrder($order, $checkout);
-        return $this->gateway()->request($request);
+        $data = $this->getRedirectRequestDataFromOrder($order);
+        return $this->gateway()->request($data);
     }
 
     /**
@@ -237,7 +237,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
         $this->_order = $order;
 
         try {
-            $response = $this->getPaymentRedirect($order, $this->getCheckout());
+            $response = $this->getPaymentRedirect($order);
 
             if ($response->isSuccessful()) {
                 $payment = $order->getPayment();
@@ -251,7 +251,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
 
             return $response->processUrl();
         } catch (Exception $e) {
-            Mage::log('P2P_LOG: CheckoutRedirect/Exception [' . $order->getRealOrderId() . '] ' . $e->getMessage() . ' -- ' . get_class($e));
+            Mage::log('P2P_LOG: CheckoutRedirect/Exception [' . $order->getRealOrderId() . '] ' . $e->getMessage()  . ' ON ' . $e->getFile() . ' LINE ' . $e->getLine() . ' -- ' . get_class($e));
             throw $e;
         }
 
@@ -259,19 +259,18 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
 
     /**
      * @param Mage_Sales_Model_Order $order
-     * @param Mage_Checkout_Model_Session $checkout
-     * @return RedirectRequest
+     * @return array
      */
-    public function getRedirectRequestFromOrder($order, $checkout)
+    public function getRedirectRequestDataFromOrder($order)
     {
-        $reference = $checkout->getLastRealOrderId();
+        $reference = $order->getRealOrderId();
         $total = self::getModuleConfig('grandtotal') ? $order->getGrandTotal() : $order->getTotalDue();
 
         if (!$total)
             $total = self::getModuleConfig('grandtotal') ? $order->getTotalDue() : $order->getGrandTotal();
 
         $subtotal = $order->getSubtotal();
-        $discount = (int) $order->getDiscountAmount() != 0 ? ($order->getDiscountAmount() * -1) : 0;
+        $discount = (int)$order->getDiscountAmount() != 0 ? ($order->getDiscountAmount() * -1) : 0;
         $taxAmount = $order->getTaxAmount();
         $shipping = $order->getShippingAmount();
 
@@ -331,12 +330,12 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                 'shipping' => $this->parseAddressPerson($order->getShippingAddress()),
             ],
             'returnUrl' => Mage::getUrl('placetopay/processing/response') . '?reference=' . $reference,
-            'expiration' => date('c', strtotime('+2 days')),
+            'expiration' => date('c', strtotime('+' . self::getModuleConfig('expiration') . ' minutes')),
             'ipAddress' => Mage::helper('core/http')->getRemoteAddr(),
             'userAgent' => Mage::helper('core/http')->getHttpUserAgent(),
         ];
 
-        return new RedirectRequest($data);
+        return $data;
     }
 
     /**
@@ -361,27 +360,55 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
 
     /**
      * @param Mage_Sales_Model_Order_Address $address
-     * @return Person
+     * @return array
      */
     public function parseAddressPerson($address)
     {
-        // When there is no person it comes as boolean
         if ($address) {
-            return new Person([
-                'name' => $address->getFirstname(),
-                'surname' => $address->getLastname(),
-                'email' => $address->getEmail(),
-                'address' => [
-                    'country' => $address->getCountryId(),
-                    'state' => $address->getRegion(),
-                    'city' => $address->getCity(),
-                    'street' => implode(' ', $address->getStreet()),
-                    'phone' => $address->getTelephone(),
-                    'postalCode' => $address->getPostcode(),
-                ],
-            ]);
-        }
 
+            if ($mapping = self::getModuleConfig('personmap')) {
+                $data = [
+                    'name' => $address->getFirstname(),
+                    'surname' => $address->getLastname(),
+                    'email' => $address->getEmail(),
+                ];
+
+                $map = [];
+                foreach (explode('|', $mapping) as $item) {
+                    $t = explode(':', $item);
+                    if (is_array($t) && sizeof($t) == 2) {
+                       $map[$t[0]] = $t[1];
+                    }
+                }
+
+                $uAddress = [];
+                foreach ($map as $key => $value) {
+                    $uAddress[$key] = $address->getData($value);
+                }
+
+                $data['address'] = $uAddress;
+            } else {
+                $data = [
+                    'name' => $address->getFirstname(),
+                    'surname' => $address->getLastname(),
+                    'email' => $address->getEmail(),
+                    'address' => [
+                        'country' => $address->getCountryId(),
+                        'state' => $address->getRegion(),
+                        'city' => $address->getCity(),
+                        'street' => implode(' ', $address->getStreet()),
+                        'phone' => $address->getTelephone(),
+                        'postalCode' => $address->getPostcode(),
+                    ],
+                ];
+            }
+
+            if ($field = self::getModuleConfig('mobilemap'))
+                $data['mobile'] = $address->getData($field);
+
+            return $data;
+        }
+        // When there is no person it comes as boolean
         return null;
     }
 

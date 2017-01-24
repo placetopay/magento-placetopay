@@ -136,7 +136,10 @@
         <placetopay>
             <merchantname></merchantname>
             <merchantdocument></merchantdocument>
+            <expiration>120</expiration>
             <environment>testing</environment>
+            <mobilemap>fax</mobilemap>
+            <cachewsdl>0</cachewsdl>
         </placetopay>
         <!-- 'payment' configuration section (tab) -->
         <payment>

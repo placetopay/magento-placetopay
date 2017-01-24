@@ -1,5 +1,7 @@
 <?php
 
+require_once(__DIR__ . '/../bootstrap.php');
+
 class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Action
 {
     /**
@@ -54,7 +56,7 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
 
             return $this->_redirectUrl($url);
         } catch (Exception $e) {
-            Mage::log('P2P_LOG: RedirectAction ' . $e->getMessage());
+            Mage::log('P2P_LOG: RedirectAction ' . $e->getMessage() . ' ON ' . $e->getFile() . ' LINE ' . $e->getLine());
             $session->addError($e->getMessage());
             return $this->_redirectError('checkout/cart');
         }
@@ -127,9 +129,9 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
             return $this->_redirect('sales/order/history/');
         } catch (Mage_Core_Exception $e) {
             $this->_getCheckout()->addError($e->getMessage());
-            Mage::log('P2P_LOG: ResponseAction1 [' . $orderId . ']' . $e->getMessage());
+            Mage::log('P2P_LOG: ResponseAction1 [' . $orderId . ']' . $e->getMessage() . ' ON ' . $e->getFile() . ' LINE ' . $e->getLine());
         } catch (Exception $e) {
-            Mage::log('P2P_LOG: ResponseAction2 [' . $orderId . ']' . $e->getMessage());
+            Mage::log('P2P_LOG: ResponseAction2 [' . $orderId . ']' . $e->getMessage() . ' ON ' . $e->getFile() . ' LINE ' . $e->getLine());
         }
 
         return $this->_redirect('checkout/cart');
@@ -166,4 +168,64 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
             Mage::log('P2P_LOG: Wrong or empty notification data: ' . serialize($data));
         }
     }
+
+    public function createAction()
+    {
+        try {
+            /**
+             * @var Mage_Sales_Model_Order $order
+             */
+            $order = Mage::getModel('sales/order');
+            $order->loadByIncrementId($this->getRequest()->getParam('reference'));
+            if (!$order->getId()) {
+                Mage::throwException(Mage::helper('placetopay')->__('No order for processing was found.'));
+            }
+
+            /**
+             * @var EGM_PlacetoPay_Model_Abstract $p2p
+             */
+            $p2p = $order->getPayment()->getMethodInstance();
+            $url = $p2p->getCheckoutRedirect($order);
+
+            return $this->_redirectUrl($url);
+        } catch (Exception $e) {
+            Mage::log('P2P_LOG: CreateAction ' . $e->getMessage() . ' ON ' . $e->getFile() . ' LINE ' . $e->getLine());
+            return $this->_redirectError('checkout/cart');
+        }
+    }
+
+    public function debugAction()
+    {
+        try {
+
+            $hash = $this->getRequest()->getParam('hash');
+            if (!$hash)
+                return $this->norouteAction();
+
+            /**
+             * @var Mage_Sales_Model_Order $order
+             */
+            $order = Mage::getModel('sales/order');
+            $order->loadByIncrementId($this->getRequest()->getParam('reference'));
+            if (!$order->getId()) {
+                Mage::throwException(Mage::helper('placetopay')->__('No order for processing was found.'));
+            }
+
+            /**
+             * @var EGM_PlacetoPay_Model_Abstract $p2p
+             */
+            $p2p = $order->getPayment()->getMethodInstance();
+
+            if ($hash != md5($order->getRealOrderId() . $p2p->getConfig('trankey')))
+                return $this->norouteAction();
+
+            $data = $p2p->getRedirectRequestDataFromOrder($order);
+
+            print_r(json_encode($data));
+        } catch (Exception $e) {
+            Mage::log('P2P_LOG: DebugAction ' . $e->getMessage() . ' ON ' . $e->getFile() . ' LINE ' . $e->getLine());
+            return $this->_redirectError('checkout/cart');
+        }
+    }
+
 }
