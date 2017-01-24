@@ -365,8 +365,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     public function parseAddressPerson($address)
     {
         if ($address) {
-
-            if ($mapping = self::getModuleConfig('personmap')) {
+            if ($mapping = self::getModuleConfig('addressmap')) {
                 $data = [
                     'name' => $address->getFirstname(),
                     'surname' => $address->getLastname(),
