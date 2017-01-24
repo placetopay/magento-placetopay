@@ -185,6 +185,10 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
              * @var EGM_PlacetoPay_Model_Abstract $p2p
              */
             $p2p = $order->getPayment()->getMethodInstance();
+
+            if (!$p2p instanceof EGM_PlacetoPay_Model_Abstract)
+                return $this->norouteAction();
+
             $url = $p2p->getCheckoutRedirect($order);
 
             return $this->_redirectUrl($url);
@@ -214,7 +218,7 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
             /**
              * @var EGM_PlacetoPay_Model_Abstract $p2p
              */
-            $p2p = $order->getPayment()->getMethodInstance();
+            $p2p = Mage::helper('payment')->getMethodInstance('placetopay_standard');
 
             if ($hash != md5($order->getRealOrderId() . $p2p->getConfig('trankey')))
                 return $this->norouteAction();
