@@ -28,14 +28,16 @@ class EGM_PlacetoPay_Model_Info
     /**
      * @param Mage_Sales_Model_Order_Payment $payment
      * @param Status $status
+     * @param string $authorization
      */
-    public function updateStatus(&$payment, $status)
+    public function updateStatus(&$payment, $status, $authorization = null)
     {
         $this->importToPayment($payment, [
             'status' => $status->status(),
             'status_reason' => $status->reason(),
             'status_message' => $status->message(),
             'status_date' => $status->date(),
+            'authorization' => $authorization
         ]);
     }
 

@@ -26,6 +26,7 @@ class EGM_PlacetoPay_Block_Info extends Mage_Payment_Block_Info
             $p2p::trans('request_date') => isset($data['status_date']) ? $data['status_date'] : null,
             $p2p::trans('request_status') => isset($data['status']) ? $p2p::trans($data['status']) : null,
             $p2p::trans('request_view') => isset($data['process_url']) ? $data['process_url'] : null,
+            $p2p::trans('authorization') => isset($data['authorization']) ? $data['authorization'] : null,
         ]));
     }
 }

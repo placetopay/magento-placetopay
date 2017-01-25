@@ -87,7 +87,6 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
                  */
                 $p2p = $payment->getMethodInstance();
 
-                // valida que la orden tenga a PlacetoPay como medio de pago
                 if (0 !== strpos($p2p->getCode(), 'placetopay_'))
                     Mage::throwException(Mage::helper('placetopay')->__('Unknown payment method.'));
 
@@ -160,7 +159,8 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
             $notification = $p2p->gateway()->readNotification($data);
 
             if ($notification->isValidNotification()) {
-                $p2p->settleOrderStatus($notification->status(), $order);
+                $information = $p2p->gateway()->query($notification->requestId());
+                $p2p->settleOrderStatus($information, $order);
             } else {
                 Mage::log('P2P_LOG: Invalid notification: ' . serialize($data));
             }

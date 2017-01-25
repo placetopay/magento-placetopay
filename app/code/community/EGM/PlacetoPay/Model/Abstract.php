@@ -453,19 +453,21 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
         $response = $this->gateway()->query($info['request_id']);
 
         if ($response->isSuccessful()) {
-            $this->settleOrderStatus($response->status(), $order);
+            $this->settleOrderStatus($response, $order, $payment);
         }
 
         return $response;
     }
 
     /**
-     * @param Status $status
+     * @param \Dnetix\Redirection\Message\RedirectInformation $information
      * @param Mage_Sales_Model_Order $order
      * @param Mage_Sales_Model_Order_Payment $payment
      */
-    public function settleOrderStatus(Status $status, &$order, $payment = null)
+    public function settleOrderStatus(\Dnetix\Redirection\Message\RedirectInformation $information, &$order, $payment = null)
     {
+        $status = $information->status();
+
         switch ($status->status()) {
             case Status::ST_APPROVED:
                 $comment = self::trans('transaction_approved');
@@ -492,7 +494,13 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                 $payment = $order->getPayment();
 
             $info = $this->getInfoModel();
-            $info->updateStatus($payment, $status);
+            $authorization = null;
+            if(is_array($information->payment()) && isset($information->payment()[0]))
+            {
+                $transaction = $information->payment()[0];
+                $authorization = $transaction->authorization();
+            }
+            $info->updateStatus($payment, $status, $authorization);
 
             if ($status->isApproved()) {
                 $this->_createInvoice($order);
@@ -507,6 +515,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                 $order->setState($state, $orderStatus, $comment)
                     ->save();
             }
+
         }
     }
 }

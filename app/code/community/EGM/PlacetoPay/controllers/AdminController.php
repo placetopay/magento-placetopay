@@ -13,6 +13,7 @@ class EGM_PlacetoPay_AdminController extends Mage_Core_Controller_Front_Action
             return null;
         }
 
+        $locale = Mage::app()->getLocale()->getLocaleCode();
         $version = EGM_PlacetoPay_Model_Abstract::VERSION;
         $date = ((new DateTime())->format('c'));
 
@@ -42,7 +43,7 @@ class EGM_PlacetoPay_AdminController extends Mage_Core_Controller_Front_Action
             'addressMap' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('addressmap'),
         ];
 
-        $data = json_encode(compact('version', 'date', 'status'), JSON_PRETTY_PRINT) . "\n";
+        $data = json_encode(compact('locale', 'version', 'date', 'status'), JSON_PRETTY_PRINT) . "\n";
 
         $this->getResponse()->setHeader('Content-Type', 'text/plain');
         $this->getResponse()->setBody($data);

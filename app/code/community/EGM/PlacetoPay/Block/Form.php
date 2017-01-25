@@ -64,12 +64,21 @@ class EGM_PlacetoPay_Block_Form extends Mage_Payment_Block_Form
 
         $this->countPendingOrders = sizeof($collection);
         if ($this->countPendingOrders > 0) {
-            $o = reset($collection);
-            $this->lastOrder = $o->getRealOrderId();
-            $this->lastAuthorization = $o->getPayment()->getAdditionalInformation('placetopay_auth_code');
+            /**
+             * @var Mage_Sales_Model_Order $lastOrder
+             */
+            $lastOrder = reset($collection);
+            $information = $lastOrder->getPayment()->getAdditionalInformation();
+            $this->lastOrder = $lastOrder->getRealOrderId();
+            $this->lastAuthorization = isset($information['authorization']) ? $information['authorization'] : null;
         }
 
         return ($this->countPendingOrders > 0);
+    }
+
+    public function lastAuthorization()
+    {
+        return $this->lastAuthorization;
     }
 
     /**
@@ -78,10 +87,7 @@ class EGM_PlacetoPay_Block_Form extends Mage_Payment_Block_Form
      */
     public function hasCifin()
     {
-        // obtiene el nombre del medio de pago
-        $paymentCode = $this->getMethod()->getCode();
-        // obtiene la configuracion de PlacetoPay
-        $fields = Mage::getStoreConfig('payment/' . $paymentCode);
-        return $fields['hascifin'];
+        $paymentMethodCode = $this->getMethod()->getCode();
+        return Mage::getStoreConfig('payment/' . $paymentMethodCode . '/hascifin');
     }
 }

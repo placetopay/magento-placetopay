@@ -22,7 +22,8 @@
                     $this->lastOrder,
                     Mage::getStoreConfig('general/store_information/phone'),
                     '<a href="mailto:' . Mage::getStoreConfig('trans_email/ident_sales/email') . '">' . Mage::getStoreConfig('trans_email/ident_sales/email') . '</a>',
-                    (isset($this->lastAuthorization) ? $this->lastAuthorization : '')); ?>
+                    (isset($this->lastAuthorization) ? $this->lastAuthorization : ''));
+                ?>
             </p>
             <br/>
             <span
