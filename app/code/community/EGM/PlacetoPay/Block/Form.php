@@ -50,6 +50,9 @@ class EGM_PlacetoPay_Block_Form extends Mage_Payment_Block_Form
     {
         $customer = Mage::getSingleton('customer/session')->getCustomer()->getId();
 
+        /**
+         * @var Mage_Sales_Model_Order[] $collection
+         */
         $collection = Mage::getResourceModel('sales/order_collection')
             ->addAttributeToSelect('*')
             ->addFieldToFilter('customer_id', $customer)
@@ -59,6 +62,7 @@ class EGM_PlacetoPay_Block_Form extends Mage_Payment_Block_Form
             ->addAttributeToFilter('status', ['in' => [
                 'pending', 'pending_payment', 'pending_placetopay', Mage_Payment_Model_Method_Abstract::STATUS_UNKNOWN,
             ]])
+            ->addAttributeToSort('created_at', 'DESC')
             ->load()
             ->getItems();
 
