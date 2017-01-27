@@ -2,7 +2,7 @@
 <config>
     <modules>
         <EGM_PlacetoPay>
-            <version>2.0.0.0</version>
+            <version>2.1.1.1</version>
         </EGM_PlacetoPay>
     </modules>
 
@@ -47,6 +47,11 @@
             <placetopay>
                 <class>EGM_PlacetoPay_Block</class>
             </placetopay>
+            <sales>
+                <rewrite>
+                    <order_info>EGM_PlacetoPay_Block_Sales_Order_Info</order_info>
+                </rewrite>
+            </sales>
         </blocks>
         <payment>
             <groups>

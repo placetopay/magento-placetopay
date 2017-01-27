@@ -1,40 +1,10 @@
 <?php
-/**
- * Magento
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@magento.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade Magento to newer
- * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magento.com for more information.
- *
- * @category    Mage
- * @package     Mage_Sales
- * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
- * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- */
 
+use Dnetix\Dates\DateHelper;
 
-/**
- * Invoice view  comments form
- *
- * @category    Mage
- * @package     Mage_Sales
- * @author      Magento Core Team <core@magentocommerce.com>
- */
-class EGM_PlacetoPay_Sales_Block_Order_Info extends Mage_Core_Block_Template
+class EGM_PlacetoPay_Block_Sales_Order_Info extends Mage_Sales_Block_Order_Info
 {
-    protected $_links = [];
+    protected $_links = array();
 
     protected function _construct()
     {
@@ -47,15 +17,46 @@ class EGM_PlacetoPay_Sales_Block_Order_Info extends Mage_Core_Block_Template
         if ($headBlock = $this->getLayout()->getBlock('head')) {
             $headBlock->setTitle($this->__('Order # %s', $this->getOrder()->getRealOrderId()));
         }
-        $this->setChild(
-            'payment_info',
-            $this->helper('payment')->getInfoBlock($this->getOrder()->getPayment())
-        );
+    }
+
+    public function _t($text)
+    {
+        return EGM_PlacetoPay_Model_Abstract::trans($text);
     }
 
     public function getPaymentInfoHtml()
     {
-        return $this->getChildHtml('payment_info');
+        $payment = $this->getOrder()->getPayment();
+        /**
+         * @var EGM_PlacetoPay_Model_Abstract $p2p
+         */
+        $p2p = $payment->getMethodInstance();
+        $information = $payment->getAdditionalInformation();
+
+        $html = '<p class="subtitle"><strong>' . $p2p->getConfig('title') . '</strong></p>';
+
+        $html .= '<dl class="payment-info">';
+        if (isset($information['request_id']))
+            $html .= '<dt>' . $this->_t('request_id') . ' <span>' . $information['request_id'] . '</span></dt>';
+        if (isset($information['status_date']))
+            $html .= '<dt>' . $this->_t('request_date') . ' <span>' . DateHelper::create($information['status_date'])->format('Y-m-d H:i:s') . '</span></dt>';
+        if (isset($information['process_url'])) {
+            $action = $this->_t('Finish payment');
+            $status = new \Dnetix\Redirection\Entities\Status(['status' => isset($information['status']) ? $information['status'] : 'PENDING']);
+            if ($status->isApproved() || $status->isRejected()) {
+                $action = $this->_t('View payment details');
+            }
+            $html .= '<div style="text-align: center;"><a class="button btn-cart" href="' . $information['process_url'] . '" style="padding: 3px 10px; margin: 5px 0;">' . $action . '</a></div>';
+        }
+        if (isset($information['transactions']) && sizeof($information['transactions']) > 0) {
+            $html .= '<p class="transactions">' . $this->_t('Transactions') . '</p>';
+            foreach ($information['transactions'] as $transaction) {
+                $html .= '<div class="transaction">' . $this->_t($transaction['franchise']) . ' (' . $transaction['authorization'] . ') ' . $this->_t($transaction['status']) . '</div>';
+            }
+        }
+        $html .= '</dl>';
+
+        return $html;
     }
 
     /**
@@ -70,11 +71,11 @@ class EGM_PlacetoPay_Sales_Block_Order_Info extends Mage_Core_Block_Template
 
     public function addLink($name, $path, $label)
     {
-        $this->_links[$name] = new Varien_Object([
+        $this->_links[$name] = new Varien_Object(array(
             'name' => $name,
             'label' => $label,
-            'url' => empty($path) ? '' : Mage::getUrl($path, ['order_id' => $this->getOrder()->getId()]),
-        ]);
+            'url' => empty($path) ? '' : Mage::getUrl($path, array('order_id' => $this->getOrder()->getId()))
+        ));
         return $this;
     }
 
@@ -108,9 +109,9 @@ class EGM_PlacetoPay_Sales_Block_Order_Info extends Mage_Core_Block_Template
     public function getReorderUrl($order)
     {
         if (!Mage::getSingleton('customer/session')->isLoggedIn()) {
-            return $this->getUrl('sales/guest/reorder', ['order_id' => $order->getId()]);
+            return $this->getUrl('sales/guest/reorder', array('order_id' => $order->getId()));
         }
-        return $this->getUrl('sales/order/reorder', ['order_id' => $order->getId()]);
+        return $this->getUrl('sales/order/reorder', array('order_id' => $order->getId()));
     }
 
     /**
@@ -123,8 +124,8 @@ class EGM_PlacetoPay_Sales_Block_Order_Info extends Mage_Core_Block_Template
     public function getPrintUrl($order)
     {
         if (!Mage::getSingleton('customer/session')->isLoggedIn()) {
-            return $this->getUrl('sales/guest/print', ['order_id' => $order->getId()]);
+            return $this->getUrl('sales/guest/print', array('order_id' => $order->getId()));
         }
-        return $this->getUrl('sales/order/print', ['order_id' => $order->getId()]);
+        return $this->getUrl('sales/order/print', array('order_id' => $order->getId()));
     }
 }
