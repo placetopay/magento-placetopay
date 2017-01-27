@@ -12,6 +12,7 @@ use Dnetix\Redirection\Message\RedirectInformation;
 use Dnetix\Redirection\Message\RedirectRequest;
 use Dnetix\Redirection\Message\RedirectResponse;
 use Dnetix\Redirection\Message\ReverseResponse;
+use SoapClient;
 
 class SoapCarrier extends Carrier
 {
@@ -22,7 +23,7 @@ class SoapCarrier extends Carrier
         $config = array_merge([
             'soap_version' => SOAP_1_2,
             'features' => SOAP_SINGLE_ELEMENT_ARRAYS,
-            'cache_wsdl' => WSDL_CACHE_DISK,
+            'cache_wsdl' => WSDL_CACHE_NONE,
             'trace' => false,
             'encoding' => 'UTF-8',
         ], $config);
@@ -30,7 +31,7 @@ class SoapCarrier extends Carrier
         $wsdl = $config['wsdl'];
         unset($config['wsdl']);
 
-        $client = new \SoapClient($wsdl, $config);
+        $client = new SoapClient($wsdl, $config);
         $client->__setSoapHeaders($this->authentication()->asSoapHeader());
 
         return $client;

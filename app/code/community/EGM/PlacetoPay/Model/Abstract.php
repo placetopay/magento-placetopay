@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../bootstrap.php');
  */
 abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_Abstract
 {
-    const VERSION = '2.1.0.0';
+    const VERSION = '2.1.1.1';
     const WS_URL = 'https://test.placetopay.com/redirection/';
 
     /**
@@ -454,6 +454,8 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
 
         if ($response->isSuccessful()) {
             $this->settleOrderStatus($response, $order, $payment);
+        } else {
+            Mage::log('P2P_LOG: Abstract/Resolve Non successful: ' . $response->status()->message() . ' ' . $response->status()->reason());
         }
 
         return $response;
@@ -494,13 +496,12 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                 $payment = $order->getPayment();
 
             $info = $this->getInfoModel();
-            $authorization = null;
+            $transaction = null;
             if(is_array($information->payment()) && isset($information->payment()[0]))
             {
                 $transaction = $information->payment()[0];
-                $authorization = $transaction->authorization();
             }
-            $info->updateStatus($payment, $status, $authorization);
+            $info->updateStatus($payment, $status, $transaction);
 
             if ($status->isApproved()) {
                 $this->_createInvoice($order);

@@ -20,7 +20,8 @@ class EGM_PlacetoPay_Model_Info
             'status_reason' => $response->status()->reason(),
             'status_message' => $response->status()->message(),
             'status_date' => $response->status()->date(),
-            'environment' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('environment')
+            'environment' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('environment'),
+            'transactions' => [],
         ]);
         $payment->save();
     }
@@ -28,16 +29,34 @@ class EGM_PlacetoPay_Model_Info
     /**
      * @param Mage_Sales_Model_Order_Payment $payment
      * @param Status $status
-     * @param string $authorization
+     * @param \Dnetix\Redirection\Entities\Transaction $transaction
      */
-    public function updateStatus(&$payment, $status, $authorization = null)
+    public function updateStatus(&$payment, $status, $transaction = null)
     {
+        $information = $payment->getAdditionalInformation();
+        $transactions = $information['transactions'];
+
+        if ($transaction) {
+            $transactions[$transaction->internalReference()] = [
+                'authorization' => $transaction->authorization(),
+                'status' => $transaction->status()->status(),
+                'status_date' => $transaction->status()->date(),
+                'status_message' => $transaction->status()->message(),
+                'status_reason' => $transaction->status()->reason(),
+                'franchise' => $transaction->franchise(),
+                'payment_method_name' => $transaction->paymentMethodName(),
+                'payment_method' => $transaction->paymentMethod(),
+                'amount' => $transaction->amount()->from()->total(),
+            ];
+        }
+
         $this->importToPayment($payment, [
             'status' => $status->status(),
             'status_reason' => $status->reason(),
             'status_message' => $status->message(),
             'status_date' => $status->date(),
-            'authorization' => $authorization
+            'authorization' => $transaction->authorization(),
+            'transactions' => $transactions,
         ]);
     }
 

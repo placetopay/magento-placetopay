@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "dnetix/redirection": "^0.2.7",
-        "dnetix/utils": "^0.4.1"
+        "dnetix/utils": "^0.4.1",
+        "dnetix/redirection": "dev-master"
     }
 }

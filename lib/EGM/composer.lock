@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1d30accd6823714a7b43bf434cffd589",
-    "content-hash": "346ce6e56c446dff37995e9c8d9c6adf",
+    "hash": "632ecf3b065e75db8db52f9a883887c4",
+    "content-hash": "b255835bda1cbd320e05adf481120435",
     "packages": [
         {
             "name": "dnetix/redirection",
-            "version": "0.2.7",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dnetix/redirection.git",
-                "reference": "6fdeed0f623b2b7a0f2556e46ea15fbfa16f9555"
+                "reference": "7db4860afc7c3c729ec5e63f3f1779341cfa08ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dnetix/redirection/zipball/6fdeed0f623b2b7a0f2556e46ea15fbfa16f9555",
-                "reference": "6fdeed0f623b2b7a0f2556e46ea15fbfa16f9555",
+                "url": "https://api.github.com/repos/dnetix/redirection/zipball/7db4860afc7c3c729ec5e63f3f1779341cfa08ef",
+                "reference": "7db4860afc7c3c729ec5e63f3f1779341cfa08ef",
                 "shasum": ""
             },
             "require": {
@@ -45,7 +45,7 @@
                 }
             ],
             "description": "Library to connect with PlacetoPay Redirection service",
-            "time": "2017-01-18 15:57:56"
+            "time": "2017-01-26 21:04:14"
         },
         {
             "name": "dnetix/utils",
@@ -94,7 +94,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "dnetix/redirection": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
