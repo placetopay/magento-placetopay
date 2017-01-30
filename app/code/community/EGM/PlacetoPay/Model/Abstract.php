@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../bootstrap.php');
  */
 abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_Abstract
 {
-    const VERSION = '2.2.0.1';
+    const VERSION = '2.2.1.0';
     const WS_URL = 'https://test.placetopay.com/redirection/';
 
     /**

@@ -5,7 +5,6 @@ class EGM_PlacetoPay_Block_Info extends Mage_Payment_Block_Info
 
     /**
      * Display the payment information on the checkout panel
-     * TODO: DC Obtain the information
      * @param null $transport
      * @return Varien_Object
      */
@@ -20,8 +19,6 @@ class EGM_PlacetoPay_Block_Info extends Mage_Payment_Block_Info
         $p2p = $payment->getMethodInstance();
 
         return $transport->addData(array_filter([
-            $p2p::trans('merchantname') => $p2p::getModuleConfig('merchantname'),
-            $p2p::trans('merchantdocument') => $p2p::getModuleConfig('merchantdocument'),
             $p2p::trans('request_id') => isset($data['request_id']) ? $data['request_id'] : null,
             $p2p::trans('request_date') => isset($data['status_date']) ? $data['status_date'] : null,
             $p2p::trans('request_status') => isset($data['status']) ? $p2p::trans($data['status']) : null,
