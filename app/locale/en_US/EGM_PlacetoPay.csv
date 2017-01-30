@@ -23,6 +23,7 @@
 "REJECTED","Rejected"
 "DECLINED","Declined"
 "CANCELED","Canceled"
+"PENDING","Pending"
 "authorization","Autorización/CUS"
 "ERROR","Failed"
 "FAILED","Failed"

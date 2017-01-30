@@ -37,7 +37,7 @@ class EGM_PlacetoPay_Block_Adminhtml_Sales_Order_View_Tab_Info extends Mage_Admi
         if (isset($information['transactions']) && sizeof($information['transactions']) > 0) {
             $html .= '<p class="transactions"><strong>' . $this->_t('Transactions') . '</strong></p>';
             foreach ($information['transactions'] as $transaction) {
-                $html .= '<div class="transaction">' . $this->_t($transaction['franchise']) . ' (' . $transaction['authorization'] . ') ' . '<span class="' . $transaction['status'] . '">' . $this->_t($transaction['status']) . '</span></div>';
+                $html .= '<div class="transaction">' . $this->_t($transaction['franchise']) . ' (CUS ' . $transaction['authorization'] . ') ' . '<span class="' . $transaction['status'] . '">' . $this->_t($transaction['status']) . '</span></div>';
             }
         }
         $html .= '</dl>';
