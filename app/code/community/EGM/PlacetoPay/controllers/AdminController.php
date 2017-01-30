@@ -30,17 +30,20 @@ class EGM_PlacetoPay_AdminController extends Mage_Core_Controller_Front_Action
             'standard' => [
                 'active' => $p2pStandard->getConfig('active'),
                 'environment' => $p2pStandard->getConfig('environment'),
-                'login' => $p2pStandard->getConfig('login')
+                'login' => $p2pStandard->getConfig('login'),
+                'pm' => $p2pStandard->getConfig('payment_method'),
             ],
             'promotion' => [
                 'active' => $p2pPromotion->getConfig('active'),
                 'environment' => $p2pPromotion->getConfig('environment'),
                 'login' => $p2pPromotion->getConfig('login'),
                 'dateRange' => $p2pPromotion->getConfig('daterange'),
+                'pm' => $p2pPromotion->getConfig('payment_method'),
             ],
             'cache' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('cache_wsdl'),
             'expiration' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('expiration'),
             'addressMap' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('addressmap'),
+            'ignorepaymentmethod' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('ignorepaymentmethod'),
         ];
 
         $data = json_encode(compact('locale', 'version', 'date', 'status'), JSON_PRETTY_PRINT) . "\n";
