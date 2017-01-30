@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../bootstrap.php');
  */
 abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_Abstract
 {
-    const VERSION = '2.1.1.1';
+    const VERSION = '2.2.0.0';
     const WS_URL = 'https://test.placetopay.com/redirection/';
 
     /**
@@ -251,7 +251,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
 
             return $response->processUrl();
         } catch (Exception $e) {
-            Mage::log('P2P_LOG: CheckoutRedirect/Exception [' . $order->getRealOrderId() . '] ' . $e->getMessage()  . ' ON ' . $e->getFile() . ' LINE ' . $e->getLine() . ' -- ' . get_class($e));
+            Mage::log('P2P_LOG: CheckoutRedirect/Exception [' . $order->getRealOrderId() . '] ' . $e->getMessage() . ' ON ' . $e->getFile() . ' LINE ' . $e->getLine() . ' -- ' . get_class($e));
             throw $e;
         }
 
@@ -335,6 +335,12 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
             'userAgent' => Mage::helper('core/http')->getHttpUserAgent(),
         ];
 
+        if (!self::getModuleConfig('ignorepaymentmethod') && !$this->isDefault()) {
+            if ($pm = $this->getConfig('payment_method')) {
+                $data['paymentMethod'] = $pm;
+            }
+        }
+
         return $data;
     }
 
@@ -376,7 +382,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                 foreach (explode('|', $mapping) as $item) {
                     $t = explode(':', $item);
                     if (is_array($t) && sizeof($t) == 2) {
-                       $map[$t[0]] = $t[1];
+                        $map[$t[0]] = $t[1];
                     }
                 }
 
@@ -496,12 +502,8 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                 $payment = $order->getPayment();
 
             $info = $this->getInfoModel();
-            $transaction = null;
-            if(is_array($information->payment()) && isset($information->payment()[0]))
-            {
-                $transaction = $information->payment()[0];
-            }
-            $info->updateStatus($payment, $status, $transaction);
+            $transactions = $information->payment();
+            $info->updateStatus($payment, $status, $transactions);
 
             if ($status->isApproved()) {
                 $this->_createInvoice($order);
@@ -519,4 +521,6 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
 
         }
     }
+
+    public abstract function isDefault();
 }

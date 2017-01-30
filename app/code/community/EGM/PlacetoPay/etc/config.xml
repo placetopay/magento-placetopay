@@ -2,15 +2,13 @@
 <config>
     <modules>
         <EGM_PlacetoPay>
-            <version>2.1.1.1</version>
+            <version>2.2.0.0</version>
         </EGM_PlacetoPay>
     </modules>
 
     <global>
         <models>
-            <!-- model group alias to be used in Mage::getModel('newmodule/...') -->
             <placetopay>
-                <!-- base class name for the model group -->
                 <class>EGM_PlacetoPay_Model</class>
                 <resourceModel>placetopay_mysql4</resourceModel>
             </placetopay>
@@ -144,8 +142,8 @@
             <expiration>120</expiration>
             <mobilemap>fax</mobilemap>
             <cachewsdl>0</cachewsdl>
+            <ignorepaymentmethod>1</ignorepaymentmethod>
         </placetopay>
-        <!-- 'payment' configuration section (tab) -->
         <payment>
             <placetopay_standard>
                 <active>0</active>

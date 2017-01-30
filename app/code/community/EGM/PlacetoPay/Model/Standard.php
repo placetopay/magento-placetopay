@@ -23,4 +23,9 @@ class EGM_PlacetoPay_Model_Standard extends EGM_PlacetoPay_Model_Abstract
      * unique internal payment method identifier
      */
     protected $_code = 'placetopay_standard';
+
+    public function isDefault()
+    {
+        return true;
+    }
 }

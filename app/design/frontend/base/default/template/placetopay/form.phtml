@@ -1,41 +1,51 @@
-<?php $_code = $this->getMethodCode(); ?>
-<ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none">
+<?php
+/**
+ * @var EGM_PlacetoPay_Block_Form $this
+ * @var EGM_PlacetoPay_Model_Abstract $p2p
+ */
+$p2p = $this->getMethod();
+?>
+<ul class="form-list" id="payment_form_<?= $p2p->getCode() ?>" style="display:none">
     <li>
-        <img src="https://www.placetopay.com/images/providers/placetopay_xh48.png" border="0" alt="PlacetoPay"/><br/>
-        <?php echo $this->__('You will be redirected to the PlacetoPay secure payment page when you place an order.') ?>
-        <br/>
-        <p class="notice" style="margin-top: 15px;">
+        <div class="p2p_logo">
+            <img src="https://www.placetopay.com/images/providers/placetopay_xh48.png" border="0" alt="PlacetoPay"/>
+        </div>
+        <p class="p2p_description"><?= $this->__('You will be redirected to the PlacetoPay secure payment page when you place an order.') ?></p>
+        <p class="p2p_acceptance_marks" style="margin-top: 15px;">
             <?php
-            $p2p_logo = $this->getMethod()->getConfigData('display_logo');
-            if ($p2p_logo) {
-                foreach (explode(',', $p2p_logo) as $franchise) {
+            $franchises = $this->getMethod()->getConfigData('payment_method');
+            if ($franchises) {
+                foreach (explode(',', $franchises) as $franchise) {
                     echo '<img src="https://www.placetopay.com/images/providers/' . $franchise . '.png" alt="" class="acceptance_logo" style="max-width: 80px; max-height: 50px; display: inline-block; padding: 0 5px;" />';
                 }
             }
             ?>
         </p>
         <?php if ($this->hasPendingOrders()) : ?>
-            <br/>
-            <span style="color: red !important;font-weight: bold;"><?php echo $this->__('Warning!') ?></span><br/>
-            <p style="color: #636363;font-weight: ligth;text-align: justify;font-size:12px;">
-                <?php echo sprintf($this->__("At this time your order #%s display a checkout transaction which is pending receipt of confirmation from your financial institution, please wait a few minutes and check back later to see if your payment was successfully confirmed. For more information about the current state of your operation you may contact our customer service line at %s or send your concerns to the email %s and ask for the status of the transaction: '%s'."),
-                    $this->lastOrder,
-                    Mage::getStoreConfig('general/store_information/phone'),
-                    '<a href="mailto:' . Mage::getStoreConfig('trans_email/ident_sales/email') . '">' . Mage::getStoreConfig('trans_email/ident_sales/email') . '</a>',
-                    (isset($this->lastAuthorization) ? $this->lastAuthorization : ''));
-                ?>
-            </p>
-            <br/>
-            <span
-                style="color: red !important;font-weight: bold;"><?php echo $this->__('Meanwhile you have pending transactions is not advised to proceed.') ?></span>
-            <br/>
+            <div class="p2p_pending_message">
+                <div style="color: red !important;font-weight: bold;"><?php echo $this->__('Warning!') ?></div>
+                <p class="p2p_text" style="text-align: justify; font-size:0.8em;">
+                    <?php echo sprintf($this->__("At this time your order #%s display a checkout transaction which is pending receipt of confirmation from your financial institution, please wait a few minutes and check back later to see if your payment was successfully confirmed. For more information about the current state of your operation you may contact our customer service line at %s or send your concerns to the email %s and ask for the status of the transaction: '%s'."),
+                        $this->lastOrder,
+                        Mage::getStoreConfig('general/store_information/phone'),
+                        '<a href="mailto:' . Mage::getStoreConfig('trans_email/ident_sales/email') . '">' . Mage::getStoreConfig('trans_email/ident_sales/email') . '</a>',
+                        (isset($this->lastAuthorization) ? $this->lastAuthorization : ''));
+                    ?>
+                </p>
+                <p class="p2p_recommendation" style="color: red;">
+                    <?= $this->__('Meanwhile you have pending transactions is not advised to proceed.') ?>
+                </p>
+            </div>
         <?php endif; ?>
         <?php if ($this->hasCifin()) : ?>
-            <br/>
-            <p style="color: #636363;font-weight: ligth;text-align: justify;">
-                <?php echo sprintf($this->__("<small>Any person who realizes a purchase in the site <b>%s</b>, acting freely and voluntarily, authorizes to <b>%s</b>, through the service provider <b>EGM Ingeniería Sin Fronteras S.A.S</b> y/o <b>Place to Pay</b> to consult and request information from credit, financial, commercial performance and services to third parties, even in countries of the same nature in the central risk, generating a footprint consultation.</small>"), Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB), Mage::getStoreConfig('placetopay/merchantname')) ?>
-                <br/></p>
-            </p>
+            <div class="p2p_security_message">
+                <p style="text-align: justify; font-size: 0.8em;">
+                    <?= sprintf($this->__("Any person who realizes a purchase in the site <b>%s</b>, acting freely and voluntarily, authorizes to <b>%s</b>, through the service provider <b>EGM Ingeniería Sin Fronteras S.A.S</b> y/o <b>Place to Pay</b> to consult and request information from credit, financial, commercial performance and services to third parties, even in countries of the same nature in the central risk, generating a footprint consultation."),
+                        Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB),
+                        Mage::getStoreConfig('placetopay/merchantname'))
+                    ?>
+                </p>
+            </div>
         <?php endif ?>
     </li>
 </ul>

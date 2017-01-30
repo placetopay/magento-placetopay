@@ -81,7 +81,6 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
                 if (!$order->getId())
                     Mage::throwException(Mage::helper('placetopay')->__('Order not found.'));
 
-                Mage::log("TESTING");
                 $payment = $order->getPayment();
                 /**
                  * @var EGM_PlacetoPay_Model_Abstract $p2p

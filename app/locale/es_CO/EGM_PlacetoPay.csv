@@ -79,7 +79,7 @@
 "last name","apellido"
 "first name","nombre"
 "Enable CIFIN Message","Habilitar mensaje TransUnion"
-"<small>Any person who realizes a purchase in the site <b>%s</b>, acting freely and voluntarily, authorizes to <b>%s</b>, through the service provider <b>EGM Ingeniería Sin Fronteras S.A.S</b> y/o <b>Place to Pay</b> to consult and request information from credit, financial, commercial performance and services to third parties, even in countries of the same nature in the central risk, generating a footprint consultation.</small>","<small>Cualquier persona que realice un compra en el sitio <b>%s</b>, actuando libre y voluntariamente, autoriza a <b>%s</b>, a través del proveedor del servicio <b>EGM Ingeniería Sin Fronteras S.A.S</b> y/o <b>Place to Pay</b> para que consulte y solicite información del comportamiento crediticio, financiero, comercial y de servicios a terceros, incluso en países de la misma naturaleza en las centrales de riesgo, generándose una huella de consulta.</small>"
+"Any person who realizes a purchase in the site <b>%s</b>, acting freely and voluntarily, authorizes to <b>%s</b>, through the service provider <b>EGM Ingeniería Sin Fronteras S.A.S</b> y/o <b>Place to Pay</b> to consult and request information from credit, financial, commercial performance and services to third parties, even in countries of the same nature in the central risk, generating a footprint consultation.","Cualquier persona que realice un compra en el sitio <b>%s</b>, actuando libre y voluntariamente, autoriza a <b>%s</b>, a través del proveedor del servicio <b>EGM Ingeniería Sin Fronteras S.A.S</b> y/o <b>Place to Pay</b> para que consulte y solicite información del comportamiento crediticio, financiero, comercial y de servicios a terceros, incluso en países de la misma naturaleza en las centrales de riesgo, generándose una huella de consulta."
 "merchantname","Razón social"
 "merchantdocument","NIT"
 "description","Descripción del pago"
@@ -127,3 +127,4 @@
 "Transactions","Transacciones"
 "View payment details","Ver detalles del pago"
 "Finish payment","Completar el pago"
+"Payment method available","Medios de pago habilitados"

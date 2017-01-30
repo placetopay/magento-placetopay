@@ -29,25 +29,29 @@ class EGM_PlacetoPay_Model_Info
     /**
      * @param Mage_Sales_Model_Order_Payment $payment
      * @param Status $status
-     * @param \Dnetix\Redirection\Entities\Transaction $transaction
+     * @param \Dnetix\Redirection\Entities\Transaction[] $transactions
      */
-    public function updateStatus(&$payment, $status, $transaction = null)
+    public function updateStatus(&$payment, $status, $transactions = null)
     {
         $information = $payment->getAdditionalInformation();
-        $transactions = $information['transactions'];
+        $parsedTransactions = $information['transactions'];
+        $lastTransaction = null;
 
-        if ($transaction) {
-            $transactions[$transaction->internalReference()] = [
-                'authorization' => $transaction->authorization(),
-                'status' => $transaction->status()->status(),
-                'status_date' => $transaction->status()->date(),
-                'status_message' => $transaction->status()->message(),
-                'status_reason' => $transaction->status()->reason(),
-                'franchise' => $transaction->franchise(),
-                'payment_method_name' => $transaction->paymentMethodName(),
-                'payment_method' => $transaction->paymentMethod(),
-                'amount' => $transaction->amount()->from()->total(),
-            ];
+        if ($transactions && is_array($transactions) && sizeof($transactions) > 0) {
+            $lastTransaction = $transactions[0];
+            foreach ($transactions as $transaction) {
+                $parsedTransactions[$transaction->internalReference()] = [
+                    'authorization' => $transaction->authorization(),
+                    'status' => $transaction->status()->status(),
+                    'status_date' => $transaction->status()->date(),
+                    'status_message' => $transaction->status()->message(),
+                    'status_reason' => $transaction->status()->reason(),
+                    'franchise' => $transaction->franchise(),
+                    'payment_method_name' => $transaction->paymentMethodName(),
+                    'payment_method' => $transaction->paymentMethod(),
+                    'amount' => $transaction->amount()->from()->total(),
+                ];
+            }
         }
 
         $this->importToPayment($payment, [
@@ -55,8 +59,8 @@ class EGM_PlacetoPay_Model_Info
             'status_reason' => $status->reason(),
             'status_message' => $status->message(),
             'status_date' => $status->date(),
-            'authorization' => $transaction->authorization(),
-            'transactions' => $transactions,
+            'authorization' => $lastTransaction ? $lastTransaction->authorization() : null,
+            'transactions' => $parsedTransactions,
         ]);
     }
 

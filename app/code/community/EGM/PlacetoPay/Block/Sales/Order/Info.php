@@ -51,7 +51,7 @@ class EGM_PlacetoPay_Block_Sales_Order_Info extends Mage_Sales_Block_Order_Info
         if (isset($information['transactions']) && sizeof($information['transactions']) > 0) {
             $html .= '<p class="transactions">' . $this->_t('Transactions') . '</p>';
             foreach ($information['transactions'] as $transaction) {
-                $html .= '<div class="transaction">' . $this->_t($transaction['franchise']) . ' (' . $transaction['authorization'] . ') ' . $this->_t($transaction['status']) . '</div>';
+                $html .= '<div class="transaction">' . $this->_t($transaction['franchise']) . ' (' . $transaction['authorization'] . ') ' . '<span class="' . $transaction['status'] . '">' . $this->_t($transaction['status']) . '</span></div>';
             }
         }
         $html .= '</dl>';
