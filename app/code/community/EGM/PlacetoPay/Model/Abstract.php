@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../bootstrap.php');
  */
 abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_Abstract
 {
-    const VERSION = '2.2.1.1';
+    const VERSION = '2.2.2.0';
     const WS_URL = 'https://test.placetopay.com/redirection/';
 
     /**
@@ -212,6 +212,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                 'soap' => [
                     'cache_wsdl' => self::getModuleConfig('cache_wsdl'),
                 ],
+                'type' => self::getModuleConfig('connection_type'),
             ]);
         }
         return $this->gateway;
@@ -287,7 +288,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
         foreach ($visibleItems as $item) {
             $items[] = [
                 'sku' => $item->getSku(),
-                'name' => $item->getName(),
+                'name' => $this->cleanText($item->getName()),
                 'category' => $item->getProductType(),
                 'qty' => $item->getQtyOrdered(),
                 'price' => $item->getPrice(),
@@ -520,6 +521,11 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
             }
 
         }
+    }
+
+    public function cleanText($text)
+    {
+        return preg_replace('/[\(\)\,\.\#\!\-]/', '', $text);
     }
 
     public abstract function isDefault();

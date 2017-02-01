@@ -69,8 +69,10 @@ class EGM_PlacetoPay_AdminController extends Mage_Core_Controller_Front_Action
              */
             $p2p = $order->getPayment()->getMethodInstance();
 
-            if (!$p2p instanceof EGM_PlacetoPay_Model_Abstract)
+            if (!$p2p instanceof EGM_PlacetoPay_Model_Abstract) {
+                Mage::log('P2P_LOG: CreateAction instance of' . get_class($p2p));
                 return $this->norouteAction();
+            }
 
             $url = $p2p->getCheckoutRedirect($order);
 

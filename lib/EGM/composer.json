@@ -11,6 +11,7 @@
     ],
     "require": {
         "dnetix/utils": "^0.4.1",
-        "dnetix/redirection": "dev-master"
+        "dnetix/redirection": "dev-master",
+        "guzzlehttp/guzzle": "^6.2"
     }
 }

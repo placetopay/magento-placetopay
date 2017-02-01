@@ -2,7 +2,7 @@
 <config>
     <modules>
         <EGM_PlacetoPay>
-            <version>2.2.1.1</version>
+            <version>2.2.2.0</version>
         </EGM_PlacetoPay>
     </modules>
 
@@ -148,6 +148,7 @@
             <mobilemap>fax</mobilemap>
             <cachewsdl>0</cachewsdl>
             <ignorepaymentmethod>1</ignorepaymentmethod>
+            <connection_type>rest</connection_type>
         </placetopay>
         <payment>
             <placetopay_standard>
