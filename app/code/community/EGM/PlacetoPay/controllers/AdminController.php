@@ -33,6 +33,7 @@ class EGM_PlacetoPay_AdminController extends Mage_Core_Controller_Front_Action
                 'environment' => $p2pStandard->getConfig('environment'),
                 'login' => $p2pStandard->getConfig('login'),
                 'pm' => $p2pStandard->getConfig('payment_method'),
+                'skipResult' => $p2pStandard->getConfig('skip_result'),
             ],
             'promotion' => [
                 'active' => $p2pPromotion->getConfig('active'),
@@ -40,6 +41,7 @@ class EGM_PlacetoPay_AdminController extends Mage_Core_Controller_Front_Action
                 'login' => $p2pPromotion->getConfig('login'),
                 'dateRange' => $p2pPromotion->getConfig('daterange'),
                 'pm' => $p2pPromotion->getConfig('payment_method'),
+                'skipResult' => $p2pPromotion->getConfig('skip_result'),
             ],
             'cache' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('cache_wsdl'),
             'expiration' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('expiration'),

@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../bootstrap.php');
  */
 abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_Abstract
 {
-    const VERSION = '2.3.0.0';
+    const VERSION = '2.3.0.1';
     const WS_URL = 'https://test.placetopay.com/redirection/';
 
     /**
@@ -336,8 +336,6 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
             'userAgent' => Mage::helper('core/http')->getHttpUserAgent(),
             'skipResult' => $this->getConfig('skip_result') ? 'true' : 'false',
         ];
-
-        Mage::log('P2P_LOG: ' . serialize($data));
 
         if (!self::getModuleConfig('ignorepaymentmethod') && !$this->isDefault()) {
             if ($pm = $this->getConfig('payment_method')) {
