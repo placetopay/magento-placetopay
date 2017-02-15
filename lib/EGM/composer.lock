@@ -13,24 +13,21 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/dnetix/redirection.git",
-                "reference": "536ad66c75df3006a853757da3b54ffd8967fed2"
+                "reference": "c37d397a388fa998f72a6d4acc8fb8009cd57b93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dnetix/redirection/zipball/536ad66c75df3006a853757da3b54ffd8967fed2",
-                "reference": "536ad66c75df3006a853757da3b54ffd8967fed2",
+                "url": "https://api.github.com/repos/dnetix/redirection/zipball/c37d397a388fa998f72a6d4acc8fb8009cd57b93",
+                "reference": "c37d397a388fa998f72a6d4acc8fb8009cd57b93",
                 "shasum": ""
             },
             "require": {
                 "ext-soap": "*",
+                "guzzlehttp/guzzle": "^5.3",
                 "php": ">=5.4"
             },
             "require-dev": {
-                "guzzlehttp/guzzle": "^5.3",
                 "phpunit/phpunit": "^4.8"
-            },
-            "suggest": {
-                "guzzlehttp/guzzle": "To use it with REST"
             },
             "type": "library",
             "autoload": {
@@ -49,7 +46,7 @@
                 }
             ],
             "description": "Library to connect with PlacetoPay Redirection service",
-            "time": "2017-02-01 17:04:02"
+            "time": "2017-02-13 20:41:16"
         },
         {
             "name": "dnetix/utils",
