@@ -148,6 +148,7 @@
             <mobilemap>fax</mobilemap>
             <cachewsdl>0</cachewsdl>
             <ignorepaymentmethod>1</ignorepaymentmethod>
+            <ignoretaxes>0</ignoretaxes>
             <connection_type>rest</connection_type>
         </placetopay>
         <payment>

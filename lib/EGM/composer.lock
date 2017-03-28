@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/dnetix/redirection.git",
-                "reference": "c37d397a388fa998f72a6d4acc8fb8009cd57b93"
+                "reference": "255d3b3d2c6fcc7a860a44ea44e89db8b19e8b59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dnetix/redirection/zipball/c37d397a388fa998f72a6d4acc8fb8009cd57b93",
-                "reference": "c37d397a388fa998f72a6d4acc8fb8009cd57b93",
+                "url": "https://api.github.com/repos/dnetix/redirection/zipball/255d3b3d2c6fcc7a860a44ea44e89db8b19e8b59",
+                "reference": "255d3b3d2c6fcc7a860a44ea44e89db8b19e8b59",
                 "shasum": ""
             },
             "require": {
@@ -46,7 +46,7 @@
                 }
             ],
             "description": "Library to connect with PlacetoPay Redirection service",
-            "time": "2017-02-13 20:41:16"
+            "time": "2017-03-16 02:36:19"
         },
         {
             "name": "dnetix/utils",
@@ -246,20 +246,23 @@
         },
         {
             "name": "react/promise",
-            "version": "v2.5.0",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/promise.git",
-                "reference": "2760f3898b7e931aa71153852dcd48a75c9b95db"
+                "reference": "62785ae604c8d69725d693eb370e1d67e94c4053"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/promise/zipball/2760f3898b7e931aa71153852dcd48a75c9b95db",
-                "reference": "2760f3898b7e931aa71153852dcd48a75c9b95db",
+                "url": "https://api.github.com/repos/reactphp/promise/zipball/62785ae604c8d69725d693eb370e1d67e94c4053",
+                "reference": "62785ae604c8d69725d693eb370e1d67e94c4053",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
             },
             "type": "library",
             "autoload": {
@@ -285,7 +288,7 @@
                 "promise",
                 "promises"
             ],
-            "time": "2016-12-22 14:09:01"
+            "time": "2017-03-25 12:08:31"
         }
     ],
     "packages-dev": [],

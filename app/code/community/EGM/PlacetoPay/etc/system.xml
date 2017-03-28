@@ -328,12 +328,23 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </expiration>
+                        <ignoreTaxes translate="label">
+                            <label>Ignore tax information</label>
+                            <comment>If true, there will be no taxes sended to PlacetoPay</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>placetopay/ignoretaxes</config_path>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </ignoreTaxes>
                         <addressmap translate="label">
                             <label>Address Map</label>
                             <comment>Maps fields on the database with the required ones (city:region|address:postcode)</comment>
                             <frontend_type>text</frontend_type>
                             <config_path>placetopay/addressmap</config_path>
-                            <sort_order>4</sort_order>
+                            <sort_order>5</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -343,7 +354,7 @@
                             <comment>By default Magento comes with no cell number field, so type the one to map to this field</comment>
                             <frontend_type>text</frontend_type>
                             <config_path>placetopay/mobilemap</config_path>
-                            <sort_order>5</sort_order>
+                            <sort_order>6</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -354,7 +365,7 @@
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <config_path>placetopay/ignorepaymentmethod</config_path>
-                            <sort_order>6</sort_order>
+                            <sort_order>7</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -365,7 +376,7 @@
                             <frontend_type>select</frontend_type>
                             <source_model>EGM_PlacetoPay_Model_System_Config_Source_ConnectionTypes</source_model>
                             <config_path>placetopay/connection_type</config_path>
-                            <sort_order>7</sort_order>
+                            <sort_order>8</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>

@@ -303,13 +303,6 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
                 'reference' => $reference,
                 'description' => $this->getConfig('description'),
                 'amount' => [
-                    'taxes' => [
-                        [
-                            'kind' => 'valueAddedTax',
-                            'amount' => $taxAmount,
-                            'base' => $devolutionBase,
-                        ],
-                    ],
                     'details' => [
                         [
                             'kind' => 'subtotal',
@@ -336,6 +329,18 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
             'userAgent' => Mage::helper('core/http')->getHttpUserAgent(),
             'skipResult' => $this->getConfig('skip_result') ? 'true' : 'false',
         ];
+
+        if (!self::getModuleConfig('ignoretaxes')) {
+            $data['payment']['amount'] = array_merge($data['payment']['amount'], [
+                'taxes' => [
+                    [
+                        'kind' => 'valueAddedTax',
+                        'amount' => $taxAmount,
+                        'base' => $devolutionBase,
+                    ],
+                ],
+            ]);
+        }
 
         if (!self::getModuleConfig('ignorepaymentmethod') && !$this->isDefault()) {
             if ($pm = $this->getConfig('payment_method')) {
