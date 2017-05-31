@@ -4,21 +4,23 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitda5d0dbaea50ea851b6b5cd872fa8ec1
+class ComposerStaticInita3d5ef6f44ae82dfafd3223c504f0465
 {
     public static $files = array (
-        'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
+        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
+        'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        'R' => 
+        'P' => 
         array (
-            'React\\Promise\\' => 14,
+            'Psr\\Http\\Message\\' => 17,
         ),
         'G' => 
         array (
-            'GuzzleHttp\\Stream\\' => 18,
-            'GuzzleHttp\\Ring\\' => 16,
+            'GuzzleHttp\\Psr7\\' => 16,
+            'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
         'D' => 
@@ -29,17 +31,17 @@ class ComposerStaticInitda5d0dbaea50ea851b6b5cd872fa8ec1
     );
 
     public static $prefixDirsPsr4 = array (
-        'React\\Promise\\' => 
+        'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/react/promise/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
-        'GuzzleHttp\\Stream\\' => 
+        'GuzzleHttp\\Psr7\\' => 
         array (
-            0 => __DIR__ . '/..' . '/guzzlehttp/streams/src',
+            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
         ),
-        'GuzzleHttp\\Ring\\' => 
+        'GuzzleHttp\\Promise\\' => 
         array (
-            0 => __DIR__ . '/..' . '/guzzlehttp/ringphp/src',
+            0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
         ),
         'GuzzleHttp\\' => 
         array (
@@ -65,9 +67,9 @@ class ComposerStaticInitda5d0dbaea50ea851b6b5cd872fa8ec1
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitda5d0dbaea50ea851b6b5cd872fa8ec1::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitda5d0dbaea50ea851b6b5cd872fa8ec1::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitda5d0dbaea50ea851b6b5cd872fa8ec1::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInita3d5ef6f44ae82dfafd3223c504f0465::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInita3d5ef6f44ae82dfafd3223c504f0465::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInita3d5ef6f44ae82dfafd3223c504f0465::$classMap;
 
         }, null, ClassLoader::class);
     }

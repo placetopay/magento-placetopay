@@ -155,7 +155,7 @@
                         <skipResult translate="label source_model">
                             <label>Skip result page on redirection</label>
                             <config_path>payment/placetopay_standard/skip_result</config_path>
-                            <comment>Select yes to display the result page at payment.</comment>
+                            <comment>Select yes to avoid display the result page at payment.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>10</sort_order>
@@ -277,7 +277,7 @@
                         <skipResult translate="label source_model">
                             <label>Skip result page on redirection</label>
                             <config_path>payment/placetopay_promotion/skip_result</config_path>
-                            <comment>Select yes to display the result page at payment.</comment>
+                            <comment>Select yes to avoid display the result page at payment.</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>12</sort_order>
@@ -381,8 +381,39 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </connectionType>
+                        <noBuyerFill translate="label">
+                            <label>Do not fill buyer information</label>
+                            <comment>If true, the buyer information will not be automatically filled</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>placetopay/no_buyer_fill</config_path>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </noBuyerFill>
                     </fields>
                 </advanced>
+                <information>
+                    <label>Information</label>
+                    <fieldset_css>placetopay-information</fieldset_css>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>5</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <notification_where>
+                            <label>Notification URL</label>
+                            <frontend_type>button</frontend_type>
+                            <frontend_model>EGM_PlacetoPay_Block_Adminhtml_System_Config_Form_Field_Url</frontend_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </notification_where>
+                    </fields>
+                </information>
             </groups>
         </placetopay>
     </sections>

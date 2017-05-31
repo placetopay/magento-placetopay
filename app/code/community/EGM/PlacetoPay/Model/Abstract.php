@@ -12,12 +12,12 @@ require_once(__DIR__ . '/../bootstrap.php');
  *
  * @category   EGM
  * @package    EGM_PlacetoPay
- * @author     Enrique Garcia M. <ingenieria@egm.co>
+ * @author     Place to Pay. <desarrollo@placetopay.com>
  * @since      martes, 17 de noviembre de 2009
  */
 abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_Abstract
 {
-    const VERSION = '2.3.1.0';
+    const VERSION = '2.3.2.1';
     const WS_URL = 'https://test.placetopay.com/redirection/';
 
     /**
@@ -201,7 +201,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
             $envs = [
                 'production' => 'https://secure.placetopay.com/redirection/',
                 'testing' => 'https://test.placetopay.com/redirection/',
-                'development' => 'http://redirection.dnetix.co/',
+                'development' => 'https://dev.placetopay.com/redirection/',
             ];
             $url = $envs[$this->getConfig('environment')];
 
@@ -327,7 +327,8 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
             'expiration' => date('c', strtotime('+' . self::getModuleConfig('expiration') . ' minutes')),
             'ipAddress' => Mage::helper('core/http')->getRemoteAddr(),
             'userAgent' => Mage::helper('core/http')->getHttpUserAgent(),
-            'skipResult' => $this->getConfig('skip_result') ? 'true' : 'false',
+            'skipResult' => $this->getConfig('skip_result') ? true : false,
+            'noBuyerFill' => self::getModuleConfig('no_buyer_fill') ? true : false,
         ];
 
         if (!self::getModuleConfig('ignoretaxes')) {
@@ -472,6 +473,26 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
         }
 
         return $response;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order $order
+     * @param Mage_Sales_Model_Order_Payment $payment
+     * @return \Dnetix\Redirection\Message\RedirectInformation
+     */
+    public function query($order, $payment = null)
+    {
+        if (!$payment)
+            $payment = $order->getPayment();
+
+        $info = $payment->getAdditionalInformation();
+
+        if (!$info || !isset($info['request_id'])) {
+            Mage::log('P2P_LOG: Abstract/Resolve No additional information for order: ' . $order->getRealOrderId());
+            Mage::throwException('No additional information for order: ' . $order->getRealOrderId());
+        }
+
+        return $this->gateway()->query($info['request_id']);
     }
 
     /**

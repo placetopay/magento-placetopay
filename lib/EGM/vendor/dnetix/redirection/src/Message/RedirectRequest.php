@@ -40,6 +40,7 @@ class RedirectRequest extends Entity
 
     protected $captureAddress;
     protected $skipResult = false;
+    protected $noBuyerFill = false;
 
     public function __construct($data = [])
     {
@@ -51,7 +52,10 @@ class RedirectRequest extends Entity
         if (!isset($data['ipAddress']))
             $this->ipAddress = isset($_SERVER['HTTP_CLIENT_IP']) ? $_SERVER['HTTP_CLIENT_IP'] : $_SERVER['REMOTE_ADDR'];
 
-        $this->load($data, ['locale', 'returnUrl', 'paymentMethod', 'cancelUrl', 'ipAddress', 'userAgent', 'expiration', 'captureAddress', 'skipResult']);
+        $this->load($data, ['returnUrl', 'paymentMethod', 'cancelUrl', 'ipAddress', 'userAgent', 'expiration', 'captureAddress', 'skipResult', 'noBuyerFill']);
+
+        if (isset($data['locale']))
+            $this->setLocale($data['locale']);
 
         if (isset($data['payer']))
             $this->setPayer($data['payer']);
@@ -138,6 +142,12 @@ class RedirectRequest extends Entity
         return $this->subscription()->reference();
     }
 
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+        return $this;
+    }
+
     public function setPayer($person)
     {
         if (is_array($person)) {
@@ -174,6 +184,36 @@ class RedirectRequest extends Entity
         return $this;
     }
 
+    public function setReturnUrl($returnUrl)
+    {
+        $this->returnUrl = $returnUrl;
+        return $this;
+    }
+
+    public function setCancelUrl($cancelUrl)
+    {
+        $this->cancelUrl = $cancelUrl;
+        return $this;
+    }
+
+    public function setExpiration($expiration)
+    {
+        $this->expiration = $expiration;
+        return $this;
+    }
+
+    public function setUserAgent($userAgent)
+    {
+        $this->userAgent = $userAgent;
+        return $this;
+    }
+
+    public function setIpAddress($ipAddress)
+    {
+        $this->ipAddress = $ipAddress;
+        return $this;
+    }
+
     /**
      * Returns the expiration datetime for this request
      * @return string
@@ -198,6 +238,11 @@ class RedirectRequest extends Entity
         return filter_var($this->skipResult, FILTER_VALIDATE_BOOLEAN);
     }
 
+    public function noBuyerFill()
+    {
+        return filter_var($this->noBuyerFill, FILTER_VALIDATE_BOOLEAN);
+    }
+
     public function toArray()
     {
         return $this->arrayFilter([
@@ -215,6 +260,7 @@ class RedirectRequest extends Entity
             'expiration' => $this->expiration(),
             'captureAddress' => $this->captureAddress(),
             'skipResult' => $this->skipResult(),
+            'noBuyerFill' => $this->noBuyerFill(),
         ]);
     }
 
