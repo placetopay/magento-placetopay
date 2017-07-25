@@ -392,6 +392,16 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </noBuyerFill>
+                        <taxRateParsing translate="label">
+                            <label>Tax rate parsing</label>
+                            <comment>Translates the Tax rate name to a Place to Pay tax name</comment>
+                            <frontend_type>text</frontend_type>
+                            <config_path>placetopay/tax_rate_parsing</config_path>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </taxRateParsing>
                     </fields>
                 </advanced>
                 <information>

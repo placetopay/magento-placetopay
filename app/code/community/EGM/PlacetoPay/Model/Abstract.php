@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../bootstrap.php');
  */
 abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_Abstract
 {
-    const VERSION = '2.3.2.1';
+    const VERSION = '2.4.0.0';
     const WS_URL = 'https://test.placetopay.com/redirection/';
 
     /**
@@ -272,13 +272,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
 
         $subtotal = $order->getSubtotal();
         $discount = (int)$order->getDiscountAmount() != 0 ? ($order->getDiscountAmount() * -1) : 0;
-        $taxAmount = $order->getTaxAmount();
         $shipping = $order->getShippingAmount();
-
-        if (!$taxAmount || (int)$taxAmount === 0)
-            $devolutionBase = 0;
-        else
-            $devolutionBase = $subtotal - $discount;
 
         /**
          * @var Mage_Sales_Model_Order_Item[] $visibleItems
@@ -332,15 +326,34 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
         ];
 
         if (!self::getModuleConfig('ignoretaxes')) {
-            $data['payment']['amount'] = array_merge($data['payment']['amount'], [
-                'taxes' => [
-                    [
-                        'kind' => 'valueAddedTax',
-                        'amount' => $taxAmount,
-                        'base' => $devolutionBase,
-                    ],
-                ],
-            ]);
+            try {
+                $map = [];
+                if ($mapping = self::getModuleConfig('tax_rate_parsing')) {
+                    foreach (explode('|', $mapping) as $item) {
+                        $t = explode(':', $item);
+                        if (is_array($t) && sizeof($t) == 2) {
+                            $map[$t[0]] = $t[1];
+                        }
+                    }
+                }
+                $taxInformation = $order->getFullTaxInfo();
+                if (is_array($taxInformation) && sizeof($taxInformation) > 0) {
+                    $taxes = [];
+                    while ($compound = array_pop($taxInformation)) {
+                        $taxAmount = $compound['amount'];
+                        $taxPercent = $compound['percent'];
+                        foreach ($compound['rates'] as $rate) {
+                            $taxes[] = [
+                                'kind' => isset($map[$rate['code']]) ? $map[$rate['code']] : 'valueAddedTax',
+                                'amount' => $taxAmount * ($rate['percent'] / $taxPercent),
+                            ];
+                        }
+                    }
+                    $data['payment']['amount']['taxes'] = $taxes;
+                }
+            } catch (Exception $e) {
+                Mage::log('P2P_LOG: Error calculating taxes: [' . $order->getRealOrderId() . '] ' . serialize($order->getFullTaxInfo()));
+            }
         }
 
         if (!self::getModuleConfig('ignorepaymentmethod') && !$this->isDefault()) {

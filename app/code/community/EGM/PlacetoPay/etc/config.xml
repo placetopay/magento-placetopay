@@ -2,7 +2,7 @@
 <config>
     <modules>
         <EGM_PlacetoPay>
-            <version>2.3.2.1</version>
+            <version>2.4.0.0</version>
         </EGM_PlacetoPay>
     </modules>
 
@@ -151,6 +151,7 @@
             <ignoretaxes>0</ignoretaxes>
             <connection_type>rest</connection_type>
             <noBuyerFill>0</noBuyerFill>
+            <taxRateParsing>IVATaxRate:valueAddedTax|ICETaxRate:ice</taxRateParsing>
         </placetopay>
         <payment>
             <placetopay_standard>
