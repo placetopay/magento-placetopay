@@ -122,7 +122,30 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
                 }
 
             } else {
-                Mage::log('P2P_LOG: ResponseAction0 [' . $orderId . ']');
+                $reference = $this->getRequest()->getParam('reference');
+                Mage::log('P2P_LOG: ResponseAction0 [' . $orderId . '] with Reference: ' . $reference);
+                /**
+                 * @var Mage_Sales_Model_Order $order
+                 */
+                $order = Mage::getModel('sales/order')->loadByIncrementId($reference);
+                if ($order->getId()) {
+                    $payment = $order->getPayment();
+                    if ($payment) {
+                        /**
+                         * @var EGM_PlacetoPay_Model_Abstract $p2p
+                         */
+                        $p2p = $payment->getMethodInstance();
+                        if ($p2p instanceof EGM_PlacetoPay_Model_Abstract) {
+                            $additional = $payment->getAdditionalInformation();
+                            if ($p2p->isPendingOrder($order) && $additional && isset($additional['request_id'])) {
+                                if ($p2p->isPendingOrder($order) && $additional && isset($additional['request_id'])) {
+                                    $information = $p2p->gateway()->query($additional['request_id']);
+                                    $p2p->settleOrderStatus($information, $order);
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             return $this->_redirect('sales/order/history/');
