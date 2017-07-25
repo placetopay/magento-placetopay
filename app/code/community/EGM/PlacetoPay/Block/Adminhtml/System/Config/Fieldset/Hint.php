@@ -11,7 +11,7 @@
 
 /**
  * Despliega el anuncio de PlacetoPay en la configuración del sistema
- * @author     Enrique Garcia M. <ingenieria@egm.co>
+ * @author     Place to Pay. <desarrollo@placetopay.com>
  */
 class EGM_PlacetoPay_Block_Adminhtml_System_Config_Fieldset_Hint
     extends Mage_Adminhtml_Block_Abstract

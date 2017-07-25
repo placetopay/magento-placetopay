@@ -12,7 +12,7 @@
 /**
  * PlacetoPay ambito de nombres para la sesion de la transaccion
  *
- * @author     Enrique Garcia M. <ingenieria@egm.co>
+ * @author     Place to Pay. <desarrollo@placetopay.com>
  * @since      martes, 17 de noviembre de 2009
  */
 class EGM_PlacetoPay_Model_Session extends Mage_Core_Model_Session_Abstract

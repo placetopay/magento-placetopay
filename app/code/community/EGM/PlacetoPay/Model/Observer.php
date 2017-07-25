@@ -5,7 +5,7 @@
  *
  * @category   EGM
  * @package    EGM_PlacetoPay
- * @author     Enrique Garcia M. <ingenieria@egm.co>
+ * @author     Place to Pay. <desarrollo@placetopay.com>
  * @since      viernes, 7 de mayo de 2010
  */
 class EGM_PlacetoPay_Model_Observer
@@ -17,8 +17,8 @@ class EGM_PlacetoPay_Model_Observer
          */
         $collection = Mage::getModel('sales/order')->getCollection()
             ->addAttributeToSelect('increment_id')
-            ->addAttributeToFilter('created_at', ['lt' => date('Y-m-d H:i:s', time() - 7 * 60)])
-            ->addAttributeToFilter('updated_at', ['lt' => date('Y-m-d H:i:s', time() - 7 * 60)])
+            ->addAttributeToFilter('created_at', ['lt' => date('Y-m-d H:i:s', time() - (7 * 60))])
+            ->addAttributeToFilter('updated_at', ['lt' => date('Y-m-d H:i:s', time() - (7 * 60))])
             ->addAttributeToFilter('state', ['in' => [
                 Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage_Sales_Model_Order::STATE_NEW,
             ]])

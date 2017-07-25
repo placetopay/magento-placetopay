@@ -14,7 +14,7 @@
  *
  * @category   EGM
  * @package    EGM_PlacetoPay
- * @author     Enrique Garcia M. <ingenieria@egm.co>
+ * @author     Place to Pay. <desarrollo@placetopay.com>
  * @since      jueves, 2 de junio de 2011
  */
 class EGM_PlacetoPay_Model_System_Config_Source_ConnectionTypes

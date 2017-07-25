@@ -14,7 +14,7 @@
  *
  * @category   EGM
  * @package    EGM_PlacetoPay
- * @author     Enrique Garcia M. <ingenieria@egm.co>
+ * @author     Place to Pay. <desarrollo@placetopay.com>
  * @since      martes, 17 de noviembre de 2009
  */
 class EGM_PlacetoPay_Block_Form extends Mage_Payment_Block_Form
