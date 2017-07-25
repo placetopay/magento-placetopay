@@ -4,6 +4,14 @@ require_once(__DIR__ . '/../bootstrap.php');
 
 class EGM_PlacetoPay_AdminController extends Mage_Core_Controller_Front_Action
 {
+    public function resolveAction()
+    {
+        try {
+            EGM_PlacetoPay_Model_Observer::resolvePendingTransactions();
+        } catch (Exception $e) {
+            Mage::printException($e);
+        }
+    }
 
     public function statusAction()
     {
@@ -43,9 +51,13 @@ class EGM_PlacetoPay_AdminController extends Mage_Core_Controller_Front_Action
                 'pm' => $p2pPromotion->getConfig('payment_method'),
                 'skipResult' => $p2pPromotion->getConfig('skip_result'),
             ],
+            'noBuyerFill' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('no_buyer_fill'),
+            'type' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('connection_type'),
             'cache' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('cache_wsdl'),
             'expiration' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('expiration'),
             'addressMap' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('addressmap'),
+            'mobileMap' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('mobilemap'),
+            'ignoreTaxes' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('ignoretaxes'),
             'ignorepaymentmethod' => EGM_PlacetoPay_Model_Abstract::getModuleConfig('ignorepaymentmethod'),
         ];
 
@@ -89,7 +101,6 @@ class EGM_PlacetoPay_AdminController extends Mage_Core_Controller_Front_Action
     public function debugAction()
     {
         try {
-
             $hash = $this->getRequest()->getParam('hash');
             if (!$hash)
                 return $this->norouteAction();
@@ -116,7 +127,7 @@ class EGM_PlacetoPay_AdminController extends Mage_Core_Controller_Front_Action
             $data = json_encode($p2p->getRedirectRequestDataFromOrder($order), JSON_PRETTY_PRINT);
 
             $this->getResponse()->setHeader('Content-Type', 'text/plain');
-            $this->getResponse()->setBody($data);
+            $this->getResponse()->setBody($data . "\n");
 
         } catch (Exception $e) {
             Mage::log('P2P_LOG: DebugAction ' . $e->getMessage() . ' ON ' . $e->getFile() . ' LINE ' . $e->getLine());
