@@ -2,7 +2,7 @@
 <config>
     <modules>
         <EGM_PlacetoPay>
-            <version>2.4.0.0</version>
+            <version>2.4.0.2</version>
         </EGM_PlacetoPay>
     </modules>
 
@@ -160,6 +160,7 @@
                 <title>PlacetoPay - Tarjetas de crédito y débitos a cuenta</title>
                 <description>Pago en PlacetoPay</description>
                 <allowspecific>0</allowspecific>
+                <country>CO</country>
                 <environment>testing</environment>
                 <display_logo>CR_VS,RM_MC,CR_AM,CR_DN,_PSE_</display_logo>
                 <final_page>order_info</final_page>
@@ -172,6 +173,7 @@
                 <title>PlacetoPay - Promociones especiales</title>
                 <description>Pago en PlacetoPay</description>
                 <allowspecific>0</allowspecific>
+                <country>CO</country>
                 <environment>testing</environment>
                 <display_logo>CR_AM</display_logo>
                 <daterange>A</daterange>

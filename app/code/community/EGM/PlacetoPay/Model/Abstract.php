@@ -17,8 +17,8 @@ require_once(__DIR__ . '/../bootstrap.php');
  */
 abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_Abstract
 {
-    const VERSION = '2.4.0.0';
-    const WS_URL = 'https://test.placetopay.com/redirection/';
+    const VERSION = '2.4.0.2';
+    const WS_URL = 'https://secure.placetopay.com/redirection/';
 
     /**
      * unique internal payment method identifier
@@ -199,11 +199,19 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     {
         if (!$this->gateway) {
             $envs = [
-                'production' => 'https://secure.placetopay.com/redirection/',
-                'testing' => 'https://test.placetopay.com/redirection/',
-                'development' => 'https://dev.placetopay.com/redirection/',
+                'CO' => [
+                    'production' => 'https://secure.placetopay.com/redirection/',
+                    'testing' => 'https://test.placetopay.com/redirection/',
+                    'development' => 'https://dev.placetopay.com/redirection/',
+                ],
+                'EC' => [
+                    'production' => 'https://secure.placetopay.ec/redirection/',
+                    'testing' => 'https://test.placetopay.ec/redirection/',
+                    'development' => 'https://dev.placetopay.ec/redirection/',
+                ],
             ];
-            $url = $envs[$this->getConfig('environment')];
+
+            $url = $envs[$this->getConfig('country')][$this->getConfig('environment')];
 
             $this->gateway = new PlacetoPay([
                 'login' => $this->getConfig('login'),
@@ -221,6 +229,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     /**
      * @param Mage_Sales_Model_Order $order
      * @return RedirectResponse
+     * @throws \Dnetix\Redirection\Exceptions\PlacetoPayException
      */
     public function getPaymentRedirect($order)
     {
