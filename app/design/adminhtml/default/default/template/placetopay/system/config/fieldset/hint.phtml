@@ -4,8 +4,10 @@
  */
 ?>
 <div class="placetopay-payment-notice">
-    <h4><img src="https://www.placetopay.com/images/providers/placetopay_xh48.png" height="48"
-             alt="PlacetoPay"/><br/><?php echo Mage::helper('placetopay')->__('Looking for Place to Pay&reg;? We have our own tab to the left under Sales.') ?>
+    <h4>
+        <img src="https://static.placetopay.com/redirect/images/providers/placetopay.svg" height="48" alt="PlacetoPay"/>
+        <br/>
+        <?php echo Mage::helper('placetopay')->__('Looking for Place to Pay&reg;? We have our own tab to the left under Sales.') ?>
     </h4>
     <p>
         <a href="<?php echo $this->escapeHtml($this->getUrl('adminhtml/system_config/edit', ['section' => 'placetopay'])) ?>"><?php echo Mage::helper('placetopay')->__('View Place to Pay&reg; config tab.') ?></a>

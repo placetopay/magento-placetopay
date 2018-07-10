@@ -17,7 +17,7 @@ require_once(__DIR__ . '/../bootstrap.php');
  */
 abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_Abstract
 {
-    const VERSION = '2.4.0.2';
+    const VERSION = '2.4.1.0';
     const WS_URL = 'https://secure.placetopay.com/redirection/';
 
     /**
@@ -234,6 +234,7 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
     public function getPaymentRedirect($order)
     {
         $data = $this->getRedirectRequestDataFromOrder($order);
+        Mage::log('P2P_LOG: CheckoutRedirect/Failure [' . $order->getRealOrderId() . '] ' . $this->serialize($data));
         return $this->gateway()->request($data);
     }
 
@@ -367,7 +368,31 @@ abstract class EGM_PlacetoPay_Model_Abstract extends Mage_Payment_Model_Method_A
 
         if (!self::getModuleConfig('ignorepaymentmethod') && !$this->isDefault()) {
             if ($pm = $this->getConfig('payment_method')) {
-                $data['paymentMethod'] = $pm;
+
+                $parsingsCountry = [
+                    'CO' => [],
+                    'EC' => [
+                        'CR_VS' => 'ID_VS',
+                        'RM_MC' => 'ID_MC',
+                        'CR_DN' => 'ID_DN',
+                        'CR_DS' => 'ID_DS',
+                        'CR_AM' => 'ID_AM',
+                        'CR_CR' => 'ID_CR',
+                        'CR_VE' => 'ID_VE',
+                    ],
+                ];
+
+                $paymentMethods = [];
+
+                foreach (explode(',', $pm) as $paymentMethod) {
+                    if (isset($parsingsCountry[$this->getConfig('country')][$paymentMethod])) {
+                        $paymentMethods[] = $parsingsCountry[$this->getConfig('country')][$paymentMethod];
+                    } else {
+                        $paymentMethods[] = $paymentMethod;
+                    }
+                }
+
+                $data['paymentMethod'] = implode(',', $paymentMethods);
             }
         }
 

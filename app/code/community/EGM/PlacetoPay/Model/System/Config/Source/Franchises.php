@@ -17,11 +17,12 @@ class EGM_PlacetoPay_Model_System_Config_Source_Franchises
         // Define las franquicias soportadas por el medio de pago
         $options = [
             ['value' => 'CR_VS', 'label' => 'Visa'],
+            ['value' => 'RM_MC', 'label' => 'MasterCard'],
+            ['value' => 'CR_DN', 'label' => 'Diners Club'],
+            ['value' => 'CR_DS', 'label' => 'Discover'],
+            ['value' => 'CR_AM', 'label' => 'American Express'],
             ['value' => 'CR_CR', 'label' => 'Credencial Banco de Occidente'],
             ['value' => 'CR_VE', 'label' => 'Visa Electron'],
-            ['value' => 'CR_DN', 'label' => 'Diners Club'],
-            ['value' => 'CR_AM', 'label' => 'American Express'],
-            ['value' => 'RM_MC', 'label' => 'MasterCard'],
             ['value' => 'TY_EX', 'label' => 'Tarjeta Éxito'],
             ['value' => 'TY_AK', 'label' => 'Alkosto'],
             ['value' => '_PSE_', 'label' => 'Débito a cuentas corrientes y ahorros (PSE)'],

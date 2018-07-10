@@ -14,7 +14,7 @@
         </payment>
         <placetopay translate="label" module="placetopay">
             <label>
-                <![CDATA[<img src="https://www.placetopay.com/images/providers/placetopay_xh18.png" border="0" height="18" alt="PlacetoPay"/>]]></label>
+                <![CDATA[<img src="https://static.placetopay.com/redirect/images/providers/placetopay.svg" border="0" height="18" alt="PlacetoPay"/>]]></label>
             <header_css>placetopay-header</header_css>
             <tab>sales</tab>
             <frontend_type>text</frontend_type>

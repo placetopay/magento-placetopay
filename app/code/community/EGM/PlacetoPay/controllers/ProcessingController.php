@@ -78,8 +78,9 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
                  * @var Mage_Sales_Model_Order $order
                  */
                 $order = Mage::getModel('sales/order')->loadByIncrementId($orderId);
-                if (!$order->getId())
+                if (!$order->getId()) {
                     Mage::throwException(Mage::helper('placetopay')->__('Order not found.'));
+                }
 
                 $payment = $order->getPayment();
                 /**
@@ -87,8 +88,9 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
                  */
                 $p2p = $payment->getMethodInstance();
 
-                if (0 !== strpos($p2p->getCode(), 'placetopay_'))
+                if (0 !== strpos($p2p->getCode(), 'placetopay_')) {
                     Mage::throwException(Mage::helper('placetopay')->__('Unknown payment method.'));
+                }
 
                 if ($p2p->isPendingOrder($order)) {
                     $response = $p2p->resolve($order, $payment);
@@ -113,6 +115,7 @@ class EGM_PlacetoPay_ProcessingController extends Mage_Core_Controller_Front_Act
                         return $this->_redirect('checkout/cart');
                     }
                 } else {
+                    $session->addSuccess($p2p::trans('transaction_pending_message'));
                     if (Mage::getSingleton('customer/session')->isLoggedIn()) {
                         Mage::dispatchEvent('checkout_onepage_controller_success_action', ['order_ids' => [$orderId]]);
                         return $this->_redirect('sales/order/view/order_id/' . $orderId);
